@@ -1,10 +1,4 @@
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-
-import javax.swing.*;
-
-
 
 public class FightFrame extends JFrame {
 	int f_width = 1280; // 프레임 넓이
@@ -17,6 +11,9 @@ public class FightFrame extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false); // 임의로 프레임 크기 설정 x
 		setVisible(true); // 프레임을 눈에 보이게 띄우기
+		
+		Image img = new ImageIcon("rpg.png").getImage();
+		
 	}
 	public void init() {
 		
