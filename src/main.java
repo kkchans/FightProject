@@ -4,7 +4,7 @@ public class main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Frame_make fms = new Frame_make();
-		System.out.println("Hello");
+		System.out.println("Hello!!");
 	}
 }
 
