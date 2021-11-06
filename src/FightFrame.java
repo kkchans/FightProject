@@ -12,8 +12,6 @@ public class FightFrame extends JFrame {
 		setResizable(false); // 임의로 프레임 크기 설정 x
 		setVisible(true); // 프레임을 눈에 보이게 띄우기
 		
-		Image img = new ImageIcon("rpg.png").getImage();
-		
 	}
 	public void init() {
 		
