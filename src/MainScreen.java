@@ -12,17 +12,17 @@ public class MainScreen extends ImagePanel {
 	MainScreen() { // 패널 생성
 		//이미지 패널 띄우기(배경 이미지)
 		super(new ImageIcon("./img/background.png").getImage(),
-				main.MAIN_WIDTH, main.MAIN_HEIGHT);
+				Main.MAIN_WIDTH, Main.MAIN_HEIGHT);
 		
-		title.setBounds(main.MAIN_WIDTH/2-200, 100, 400, 100);
+		title.setBounds(Main.MAIN_WIDTH/2-200, 100, 400, 100);
 		title.setHorizontalAlignment(JLabel.CENTER); //가운데 정렬
 		title.setFont(new Font("Helvetica", Font.BOLD, 40));//Font font = new Font(폰트 이름, 폰트 스타일, 폰트 크기);
 		
 		//버튼들 위치, 크기 조정
-		goGameStart.setBounds(main.MAIN_WIDTH/2-150, main.MAIN_HEIGHT/2+50, 300, 40);
-		goHowToGame.setBounds(main.MAIN_WIDTH/2-150, main.MAIN_HEIGHT/2+100, 300, 40);
-		goRanking.setBounds(main.MAIN_WIDTH/2-150, main.MAIN_HEIGHT/2+150, 300, 40);
-		goExit.setBounds(main.MAIN_WIDTH/2-150, main.MAIN_HEIGHT/2+200, 300, 40);
+		goGameStart.setBounds(Main.MAIN_WIDTH/2-150, Main.MAIN_HEIGHT/2+50, 300, 40);
+		goHowToGame.setBounds(Main.MAIN_WIDTH/2-150, Main.MAIN_HEIGHT/2+100, 300, 40);
+		goRanking.setBounds(Main.MAIN_WIDTH/2-150, Main.MAIN_HEIGHT/2+150, 300, 40);
+		goExit.setBounds(Main.MAIN_WIDTH/2-150, Main.MAIN_HEIGHT/2+200, 300, 40);
 		
 		add(title);
 		add(goGameStart);

@@ -4,24 +4,41 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class main extends JFrame{
+public class Main extends JFrame{
 	static final int MAIN_WIDTH = 1280; // 메인화면 넓이
 	static final int MAIN_HEIGHT = 650; // 메인화면 높이
 	
-	MainScreen mainScreen = new MainScreen(); //메인 화면 패널
-	GameScreen gameScreen = new GameScreen();
-	HowToGameScreen howGameScreen = new HowToGameScreen();
-	RankingScreen rankingScreen = new RankingScreen();
+	MainScreen mainScreen; //메인 화면 패널
+	GameScreen gameScreen; //게임 화면 패널
+	HowToGameScreen howGameScreen; //게임 방법 화면 패널
+	RankingScreen rankingScreen; //랭킹 화면 패널
 	
 	public static void main(String args[])
 	{
-		new main();
+		new Main();
 		System.out.println("Hello!!");
 	}
 	
-	main() { // 프레임 생성
+	Main() { // 프레임 생성
+		init(); // 프레임에 들어갈 컴포넌트 세팅 메소드
+		start(); // 시작 명령 처리 부분
+		setTitle("Fight Project"); // 프레임 이름
+		setSize(MAIN_WIDTH, MAIN_HEIGHT); // 프레임 크기 설정
+		setLocationRelativeTo(null); //프레임을 화면의 중간으로 설정
+		setResizable(false); // 임의로 프레임 크기 설정 x. 창 크기를 고정.
+		//setUndecorated(true); //상단바 없애기
+		setVisible(true); // 프레임 띄우기
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//이 설정을 해야 클로즈할때 프로그램이 꺼짐. 안하면 계속 돌아감
+	}
+	public void init() {
 		
-		add(mainScreen); //메인 프레임에 메인 화면을 띄워준다.
+		mainScreen = new MainScreen(); //메인 화면 패널
+		gameScreen = new GameScreen(); //게임 화면 패널
+		howGameScreen = new HowToGameScreen(); //게임 방법 화면 패널
+		rankingScreen = new RankingScreen(); //랭킹 화면 패널
+		
+		add(mainScreen); //메인 프레임에 메인 화면 패널을 띄워준다.
+		//나머지 패널들은 보이지 않게 설정해둔다.
 		add(gameScreen); gameScreen.setVisible(false);
 		add(howGameScreen); howGameScreen.setVisible(false);
 		add(rankingScreen); rankingScreen.setVisible(false);
@@ -35,19 +52,6 @@ public class main extends JFrame{
 		gameScreen.goMainScreen.addActionListener(buttonClick);
 		howGameScreen.goMainScreen.addActionListener(buttonClick);
 		rankingScreen.goMainScreen.addActionListener(buttonClick);
-
-		init(); // 프레임에 들어갈 컴포넌트 세팅 메소드
-		start(); // 시작 명령 처리 부분
-		setTitle("Fight Project"); // 프레임 이름
-		setSize(MAIN_WIDTH, MAIN_HEIGHT); // 프레임 크기 설정
-		setLocationRelativeTo(null); //프레임을 화면의 중간으로 설정
-		setResizable(false); // 임의로 프레임 크기 설정 x. 창 크기를 고정.
-		//setUndecorated(true); //상단바 없애기
-		setVisible(true); // 프레임 띄우기
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//이 설정을 해야 클로즈할때 프로그램이 꺼짐. 안하면 계속 돌아감
-	}
-	public void init() {
-
 	}
 	public void start() {
 		
