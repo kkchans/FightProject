@@ -49,8 +49,6 @@ public class GameScreen extends ImagePanel implements KeyListener {
 		player1 = new Player(0, 300);
 		player = tk.getImage("./img/playerTest.png");
 		background = tk.getImage("./img/testImg.png");
-//		buffg.clearRect(0, 0, f_width, f_height);
-//		buffg.drawImage(me_img, x, y, this);
 	}
 	
 	protected void paintComponent(Graphics g) {
