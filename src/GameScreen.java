@@ -38,8 +38,10 @@ public class GameScreen extends ImagePanel implements KeyListener {
 		gameStart();
 		//Ű
 		
+		setLayout(null);
 		addKeyListener(this);
-		setFocusable(true);
+
+		requestFocus();
 
 	}
 
