@@ -17,6 +17,7 @@ public class Main extends JFrame{
 	{
 		new Main();
 		System.out.println("Hello!!");
+		
 	}
 	
 	Main() { // 프레임 생성
@@ -52,6 +53,11 @@ public class Main extends JFrame{
 		gameScreen.goMainScreen.addActionListener(buttonClick);
 		howGameScreen.goMainScreen.addActionListener(buttonClick);
 		rankingScreen.goMainScreen.addActionListener(buttonClick);
+		
+		//게임 플레이의 키 어댑터를 달아둔다.
+		addKeyListener(gameScreen.myListener);
+		setFocusable(true);
+		
 	}
 	public void start() {
 		
@@ -64,6 +70,7 @@ public class Main extends JFrame{
         	JButton button = (JButton)e.getSource();
         	if(button == mainScreen.goGameStart) {
         		System.out.println("게임 시작 버튼 클릭됨");
+        		gameScreen.b_gameStart = true; //게임
         		//메인 패널을 보이지 않게 하고 게임 패널을 보이게 함
         		mainScreen.setVisible(false); gameScreen.setVisible(true);
         	}
@@ -90,10 +97,13 @@ public class Main extends JFrame{
         	}
         	if(button == howGameScreen.goMainScreen) {
         		System.out.println("메인화면으로 가는 버튼 클릭됨");
+        		gameScreen.b_gameStart = false;
         		howGameScreen.setVisible(false); mainScreen.setVisible(true);
         	}
         	
         }    
     };
+
+
 	
 }

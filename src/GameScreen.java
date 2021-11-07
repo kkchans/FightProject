@@ -3,16 +3,18 @@ import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-public class GameScreen extends ImagePanel implements KeyListener {
+public class GameScreen extends ImagePanel {
 	
 	Player player1;
 	Player player2;
+	
+	boolean b_gameStart;
 	
 	//test
 	Image buffImage;
@@ -21,6 +23,7 @@ public class GameScreen extends ImagePanel implements KeyListener {
 	Image background;
 	Graphics g;
 	Toolkit tk = Toolkit.getDefaultToolkit();
+	MyKeyListener myListener = new MyKeyListener(); //프레임에서 어댑터를 달도록
 	
 	JButton goMainScreen = new JButton("←"); //뒤로가기 버튼
 	Image[] Player_img; //플레이어 애니메이션 표현을 위해 이미지를 배열로 받음
@@ -37,18 +40,14 @@ public class GameScreen extends ImagePanel implements KeyListener {
 		gameInit();
 		gameStart();
 		//키
-		
-		setLayout(null);
-		addKeyListener(this);
-
-		requestFocus();
 
 	}
 
 	void gameInit() {
-		player1 = new Player(0, 300);
+		player1 = new Player(0, 390);
 		player = tk.getImage("./img/playerTest.png");
 		background = tk.getImage("./img/testImg.png");
+
 	}
 	
 	protected void paintComponent(Graphics g) {
@@ -63,41 +62,48 @@ public class GameScreen extends ImagePanel implements KeyListener {
 	}
 	
 	void gameStart() {
+		if(b_gameStart) {
+			
+		}
+	}
+
+	public class MyKeyListener extends KeyAdapter{
+		
+		public void keyTyped(KeyEvent e) {
+			if(b_gameStart) {
+				System.out.println("keyTyped"); // 콘솔창에 메소드 이름 출력
+			}
+		}
+
+		public void keyPressed(KeyEvent e) {
+			if(b_gameStart) {
+				switch (e.getKeyCode()) { //키 코드 알아내기
+				case KeyEvent.VK_UP:
+					//점프
+					player1.jump();
+					break;
+				case KeyEvent.VK_DOWN:
+					break;
+				case KeyEvent.VK_LEFT:
+					player1.move(-1);
+					break;
+				case KeyEvent.VK_RIGHT:
+					player1.move(1);
+					break;
+				}
+				System.out.println(player1.getX());
+				repaint(); //눌렸으면 그림 다시 그리기
+				System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
+			}
+		}
+
+		public void keyReleased(KeyEvent e) {
+			if(b_gameStart) {
+				System.out.println("keyReleased"); // 콘솔창에 메소드 이름 출력
+			}
+		}
 		
 	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("keyTyped"); // 콘솔창에 메소드 이름 출력
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		switch (e.getKeyCode()) { //키 코드 알아내기
-		case KeyEvent.VK_UP:
-			//점프
-			break;
-		case KeyEvent.VK_DOWN:
-			break;
-		case KeyEvent.VK_LEFT:
-			player1.move(-1);
-			break;
-		case KeyEvent.VK_RIGHT:
-			player1.move(1);
-			break;
-		}
-		System.out.println(player1.getX());
-		repaint(); //눌렸으면 그림 다시 그리기
-		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("keyReleased"); // 콘솔창에 메소드 이름 출력
-	}
-	
 
 	
 }

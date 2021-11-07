@@ -187,6 +187,7 @@ class game_Frame extends JFrame implements KeyListener, Runnable {
 	}
 
 	public void keyReleased(KeyEvent e) {
+		System.out.println("sdfds");
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_UP:
 			KeyUp = false;
