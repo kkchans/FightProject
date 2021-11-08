@@ -10,6 +10,13 @@ import javax.swing.*;
 
 public class playerJumbTest extends JFrame {
 	GameScreen gameScreen;
+	
+	boolean keyUp = false;
+	boolean keyLeft = false;
+	boolean keyRight = false;
+
+	Thread th;
+	
 	public static void main(String args[]) {
 		new playerJumbTest();
 	}
@@ -29,7 +36,7 @@ public class playerJumbTest extends JFrame {
 	}
 
 	
-	public class GameScreen extends JPanel {
+	public class GameScreen extends JPanel implements Runnable {
 		
 		Player player1;
 		Player player2;
@@ -76,13 +83,41 @@ public class playerJumbTest extends JFrame {
 		}
 		
 		void gameStart() {
+			th = new Thread(this);
+			th.start();
+		}
+	
+
+		@Override
+		public void run() {
 			if(b_gameStart) {
 				while(true) {
-					System.out.println("게임 실행중");
+					KeyProcess();
+					repaint(); //그림 다시 그리기
+					if(player1.getJumping()) {
+						player1.jump();
+					}
 				}
 			}
 		}
-	
+		
+		void KeyProcess() {
+			if(keyUp) {
+				//점프
+				//몇초 후에 땅바닥으로
+				player1.jumpingStart();
+				keyUp = false;
+			}
+			if(keyLeft) {
+				player1.xMove(-1);
+				keyLeft = false;
+			}
+			if(keyRight) {
+				player1.xMove(1);
+				keyRight = false;
+			}
+		}
+				
 		public class MyKeyListener extends KeyAdapter{
 			
 			public void keyTyped(KeyEvent e) {
@@ -94,21 +129,10 @@ public class playerJumbTest extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if(b_gameStart) {
 					switch (e.getKeyCode()) { //키 코드 알아내기
-					case KeyEvent.VK_UP:
-						//점프
-						player1.jump();
-						break;
-					case KeyEvent.VK_DOWN:
-						break;
-					case KeyEvent.VK_LEFT:
-						player1.move(-1);
-						break;
-					case KeyEvent.VK_RIGHT:
-						player1.move(1);
-						break;
+						case KeyEvent.VK_UP:	keyUp = true;		break;
+						case KeyEvent.VK_LEFT:	keyLeft = true;		break;
+						case KeyEvent.VK_RIGHT:	keyRight = true;	break;
 					}
-					System.out.println(player1.getX());
-					repaint(); //눌렸으면 그림 다시 그리기
 					System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
 				}
 			}
@@ -117,9 +141,10 @@ public class playerJumbTest extends JFrame {
 				if(b_gameStart) {
 					System.out.println("keyReleased"); // 콘솔창에 메소드 이름 출력
 				}
-			}
+			}//keyReleased END
 			
-		}
+		}//MyKeyListener CLASS END
+
 	
 		
 	}
