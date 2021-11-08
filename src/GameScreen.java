@@ -85,10 +85,10 @@ public class GameScreen extends ImagePanel {
 				case KeyEvent.VK_DOWN:
 					break;
 				case KeyEvent.VK_LEFT:
-					player1.move(-1);
+					player1.xMove(-1);
 					break;
 				case KeyEvent.VK_RIGHT:
-					player1.move(1);
+					player1.xMove(1);
 					break;
 				}
 				System.out.println(player1.getX());
