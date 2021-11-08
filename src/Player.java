@@ -31,7 +31,7 @@ public class Player {
 
 		if(playerY >= 390-100 && up) {//점프
 			jumpEndSec = System.currentTimeMillis();
-			if(jumpEndSec - jumpStartSec >= 1) //0.005초마다 내려옴
+			if(jumpEndSec - jumpStartSec >= 1.5) //0.005초마다 내려옴
 			{
 				yMove(-1);
 				jumpStartSec = System.currentTimeMillis();
