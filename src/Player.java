@@ -8,17 +8,19 @@ public class Player {
 	private boolean jumping;
 	private boolean up;
 	private boolean down;
-
+	private int hp;
+	
 	//생성될때
 	Player(float playerX, float playerY){
 		jumping = false;
+		hp = 30;
 		this.playerX = playerX;
 		this.playerY = playerY;
 	}
 	
 	//좌우 이동
 	void xMove(float playerX) {
-		this.playerX += playerX*4;
+		this.playerX += playerX*8;
 	}
 	
 	//상하 이동
@@ -31,7 +33,7 @@ public class Player {
 
 		if(playerY >= 390-100 && up) {//점프
 			jumpEndSec = System.currentTimeMillis();
-			if(jumpEndSec - jumpStartSec >= 1.5) //0.005초마다 내려옴
+			if(jumpEndSec - jumpStartSec >= 1.5) //올라감
 			{
 				yMove(-1);
 				jumpStartSec = System.currentTimeMillis();
@@ -41,7 +43,7 @@ public class Player {
 		
 		if(playerY <= 390 && down) { //낙하
 			jumpEndSec = System.currentTimeMillis();
-			if(jumpEndSec - jumpStartSec >= 5) //0.005초마다 내려옴
+			if(jumpEndSec - jumpStartSec >= 2) //내려옴
 			{
 				yMove(1);
 				jumpStartSec = System.currentTimeMillis();

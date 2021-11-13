@@ -9,7 +9,6 @@ public class Main extends JFrame{
 	static final int MAIN_HEIGHT = 650; // 메인화면 높이
 	
 	MainScreen mainScreen; //메인 화면 패널
-	GameScreen gameScreen; //게임 화면 패널
 	HowToGameScreen howGameScreen; //게임 방법 화면 패널
 	RankingScreen rankingScreen; //랭킹 화면 패널
 	
@@ -34,13 +33,11 @@ public class Main extends JFrame{
 	public void init() {
 		
 		mainScreen = new MainScreen(); //메인 화면 패널
-		gameScreen = new GameScreen(); //게임 화면 패널
 		howGameScreen = new HowToGameScreen(); //게임 방법 화면 패널
 		rankingScreen = new RankingScreen(); //랭킹 화면 패널
 		
 		add(mainScreen); //메인 프레임에 메인 화면 패널을 띄워준다.
 		//나머지 패널들은 보이지 않게 설정해둔다.
-		add(gameScreen); gameScreen.setVisible(false);
 		add(howGameScreen); howGameScreen.setVisible(false);
 		add(rankingScreen); rankingScreen.setVisible(false);
 
@@ -50,13 +47,9 @@ public class Main extends JFrame{
 		mainScreen.goRanking.addActionListener(buttonClick);
 		mainScreen.goExit.addActionListener(buttonClick);
 		//메인 화면 이동 버튼들에 액션 리스너 달아주기
-		gameScreen.goMainScreen.addActionListener(buttonClick);
+		//gameScreen.goMainScreen.addActionListener(buttonClick);
 		howGameScreen.goMainScreen.addActionListener(buttonClick);
 		rankingScreen.goMainScreen.addActionListener(buttonClick);
-		
-		//게임 플레이의 키 어댑터를 달아둔다.
-		addKeyListener(gameScreen.myListener);
-		setFocusable(true);
 		
 	}
 	public void start() {
@@ -70,9 +63,11 @@ public class Main extends JFrame{
         	JButton button = (JButton)e.getSource();
         	if(button == mainScreen.goGameStart) {
         		System.out.println("게임 시작 버튼 클릭됨");
-        		gameScreen.b_gameStart = true; //게임
+        		new GameScreen();
+        		dispose();
+        		//gameScreen.b_gameStart = true; //게임
         		//메인 패널을 보이지 않게 하고 게임 패널을 보이게 함
-        		mainScreen.setVisible(false); gameScreen.setVisible(true);
+        		//mainScreen.setVisible(false); gameScreen.setVisible(true);
         	}
         	if(button == mainScreen.goHowToGame) {
         		System.out.println("게임 방법 버튼 클릭됨");
@@ -87,20 +82,14 @@ public class Main extends JFrame{
         		System.exit(0);
         	}
         	//메인화면 가기 버튼 이벤트
-        	if(button == gameScreen.goMainScreen) {
-        		System.out.println("메인화면으로 가는 버튼 클릭됨");
-        		gameScreen.setVisible(false); mainScreen.setVisible(true);
-        	}
         	if(button == rankingScreen.goMainScreen) {
         		System.out.println("메인화면으로 가는 버튼 클릭됨");
         		rankingScreen.setVisible(false); mainScreen.setVisible(true);
         	}
         	if(button == howGameScreen.goMainScreen) {
         		System.out.println("메인화면으로 가는 버튼 클릭됨");
-        		gameScreen.b_gameStart = false;
         		howGameScreen.setVisible(false); mainScreen.setVisible(true);
         	}
-        	
         }    
     };
 
