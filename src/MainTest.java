@@ -3,14 +3,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class Main extends JFrame{
+public class MainTest extends JFrame{
 	static final int MAIN_WIDTH = 1280; // 메인화면 넓이
 	static final int MAIN_HEIGHT = 650; // 메인화면 높이
-	//key ~~
-	static final int VK_A = 0x41;
-	static final int VK_D = 0x44;
-	static final int VK_S = 0x53;
-	static final int VK_W = 0x57;
 	
 	MainScreen mainScreen; //메인 화면 패널
 	HowToGameScreen howGameScreen; //게임 방법 화면 패널
@@ -18,14 +13,11 @@ public class Main extends JFrame{
 	
 	public static void main(String args[])
 	{
-		new Main();
-		System.out.println("Hello!!");
-		
+		new MainTest();
 	}
 	
-	Main() { // 프레임 생성
+	MainTest() { // 프레임 생성
 		init(); // 프레임에 들어갈 컴포넌트 세팅 메소드
-		start(); // 시작 명령 처리 부분
 		setTitle("Fight Project"); // 프레임 이름
 		setSize(MAIN_WIDTH, MAIN_HEIGHT); // 프레임 크기 설정
 		setLocationRelativeTo(null); //프레임을 화면의 중간으로 설정
@@ -56,9 +48,7 @@ public class Main extends JFrame{
 		rankingScreen.goMainScreen.addActionListener(buttonClick);
 		
 	}
-	public void start() {
-		
-	}
+
 
 
 	//액션 리스너 인터페이스 변수에 구현 객체를 만들어서 대입한다. (버튼을 클릭했을시에 이 기능을 실행시킨다.)
@@ -67,8 +57,9 @@ public class Main extends JFrame{
         	JButton button = (JButton)e.getSource();
         	if(button == mainScreen.goGameStart) {
         		System.out.println("게임 시작 버튼 클릭됨");
-        		new GameScreen();
+        		new test3().start();
         		dispose();
+        		//dispose();
         		//gameScreen.b_gameStart = true; //게임
         		//메인 패널을 보이지 않게 하고 게임 패널을 보이게 함
         		//mainScreen.setVisible(false); gameScreen.setVisible(true);

@@ -20,15 +20,11 @@ public class test extends Canvas implements Runnable, KeyListener {
 
 	//test
 
-    private static final long serialVersionUID = 1L;
-
-
-
     public static final int WIDTH = Main.MAIN_WIDTH;
     public static final int HEIGHT = Main.MAIN_HEIGHT;
     public static final int SCALE = 1;
     public static final String NAME = "Game";
-
+    boolean gameStart = true;
 
 
     private JFrame frame;
@@ -215,7 +211,8 @@ public class test extends Canvas implements Runnable, KeyListener {
 
 
     public static void main(String[] args) {
-        new test().start();
+    	new test().start();
+        
     }
 
 
@@ -233,7 +230,7 @@ public class test extends Canvas implements Runnable, KeyListener {
 		// TODO Auto-generated method stub
 		switch (e.getKeyCode()) { //키 코드 알아내기
 		case KeyEvent.VK_F4:	hpbar-=100;		break;
-		
+
 	}
 	System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
 	}

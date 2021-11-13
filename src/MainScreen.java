@@ -4,21 +4,21 @@ import javax.swing.*;
 
 public class MainScreen extends ImagePanel {
 	JLabel title = new JLabel("Fight Project");
-	JButton goGameStart = new JButton("°ÔÀÓ ½ÃÀÛ");	//°ÔÀÓ ½ÃÀÛ ¹öÆ°
-	JButton goHowToGame = new JButton("°ÔÀÓ ¹æ¹ı");	//°ÔÀÓ ¹æ¹ı º¸±â ¹öÆ°
-	JButton goRanking = new JButton("·©Å·");	//·©Å· ¹öÆ°
-	JButton goExit = new JButton("°ÔÀÓ Á¾·á");	//Á¾·á ¹öÆ°
+	JButton goGameStart = new JButton("ê²Œì„ ì‹œì‘");	//ê²Œì„ ì‹œì‘ ë²„íŠ¼
+	JButton goHowToGame = new JButton("ê²Œì„ ë°©ë²•");	//ê²Œì„ ë°©ë²• ë³´ê¸° ë²„íŠ¼
+	JButton goRanking = new JButton("ë­í‚¹");	//ë­í‚¹ ë²„íŠ¼
+	JButton goExit = new JButton("ê²Œì„ ì¢…ë£Œ");	//ì¢…ë£Œ ë²„íŠ¼
 	
-	MainScreen() { // ÆĞ³Î »ı¼º
-		//ÀÌ¹ÌÁö ÆĞ³Î ¶ç¿ì±â(¹è°æ ÀÌ¹ÌÁö)
+	MainScreen() { // íŒ¨ë„ ìƒì„±
+		//ì´ë¯¸ì§€ íŒ¨ë„ ë„ìš°ê¸°(ë°°ê²½ ì´ë¯¸ì§€)
 		super(new ImageIcon("./img/background.png").getImage(),
 				Main.MAIN_WIDTH, Main.MAIN_HEIGHT);
 		
 		title.setBounds(Main.MAIN_WIDTH/2-200, 100, 400, 100);
-		title.setHorizontalAlignment(JLabel.CENTER); //°¡¿îµ¥ Á¤·Ä
-		title.setFont(new Font("Helvetica", Font.BOLD, 40));//Font font = new Font(ÆùÆ® ÀÌ¸§, ÆùÆ® ½ºÅ¸ÀÏ, ÆùÆ® Å©±â);
+		title.setHorizontalAlignment(JLabel.CENTER); //ê°€ìš´ë° ì •ë ¬
+		title.setFont(new Font("Helvetica", Font.BOLD, 40));//Font font = new Font(í°íŠ¸ ì´ë¦„, í°íŠ¸ ìŠ¤íƒ€ì¼, í°íŠ¸ í¬ê¸°);
 		
-		//¹öÆ°µé À§Ä¡, Å©±â Á¶Á¤
+		//ë²„íŠ¼ë“¤ ìœ„ì¹˜, í¬ê¸° ì¡°ì •
 		goGameStart.setBounds(Main.MAIN_WIDTH/2-150, Main.MAIN_HEIGHT/2+50, 300, 40);
 		goHowToGame.setBounds(Main.MAIN_WIDTH/2-150, Main.MAIN_HEIGHT/2+100, 300, 40);
 		goRanking.setBounds(Main.MAIN_WIDTH/2-150, Main.MAIN_HEIGHT/2+150, 300, 40);

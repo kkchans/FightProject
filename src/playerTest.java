@@ -39,13 +39,13 @@ public class playerTest extends JFrame {
 		addKeyListener(gameP.myListener);
 		setFocusable(true);
 		
-		setTitle("test"); // ÇÁ·¹ÀÓ ÀÌ¸§
-		setSize(Main.MAIN_WIDTH, Main.MAIN_HEIGHT); // ÇÁ·¹ÀÓ Å©±â ¼³Á¤
-		setLocationRelativeTo(null); //ÇÁ·¹ÀÓÀ» È­¸éÀÇ Áß°£À¸·Î ¼³Á¤
-		setResizable(false); // ÀÓÀÇ·Î ÇÁ·¹ÀÓ Å©±â ¼³Á¤ x. Ã¢ Å©±â¸¦ °íÁ¤.
-		//setUndecorated(true); //»ó´Ü¹Ù ¾ø¾Ö±â
-		setVisible(true); // ÇÁ·¹ÀÓ ¶ç¿ì±â
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ÀÌ ¼³Á¤À» ÇØ¾ß Å¬·ÎÁîÇÒ¶§ ÇÁ·Î±×·¥ÀÌ ²¨Áü. ¾ÈÇÏ¸é °è¼Ó µ¹¾Æ°¨
+		setTitle("test"); // í”„ë ˆì„ ì´ë¦„
+		setSize(Main.MAIN_WIDTH, Main.MAIN_HEIGHT); // í”„ë ˆì„ í¬ê¸° ì„¤ì •
+		setLocationRelativeTo(null); //í”„ë ˆì„ì„ í™”ë©´ì˜ ì¤‘ê°„ìœ¼ë¡œ ì„¤ì •
+		setResizable(false); // ì„ì˜ë¡œ í”„ë ˆì„ í¬ê¸° ì„¤ì • x. ì°½ í¬ê¸°ë¥¼ ê³ ì •.
+		//setUndecorated(true); //ìƒë‹¨ë°” ì—†ì• ê¸°
+		setVisible(true); // í”„ë ˆì„ ë„ìš°ê¸°
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//ì´ ì„¤ì •ì„ í•´ì•¼ í´ë¡œì¦ˆí• ë•Œ í”„ë¡œê·¸ë¨ì´ êº¼ì§. ì•ˆí•˜ë©´ ê³„ì† ëŒì•„ê°
 	}
 
 	public class GamePanel extends JPanel implements Runnable {
@@ -55,7 +55,7 @@ public class playerTest extends JFrame {
 		
 		boolean b_gameStart;
 		
-		//ÀÌ¹ÌÁö
+		//ì´ë¯¸ì§€
 		Graphics2D graphics;
 		BufferedImage buffImage;
 		BufferedImage player1_img;
@@ -69,27 +69,27 @@ public class playerTest extends JFrame {
 		
 		//Graphics g;
 		Toolkit tk = Toolkit.getDefaultToolkit();
-		MyKeyListener myListener = new MyKeyListener(); //ÇÁ·¹ÀÓ¿¡¼­ ¾î´ğÅÍ¸¦ ´Şµµ·Ï
+		MyKeyListener myListener = new MyKeyListener(); //í”„ë ˆì„ì—ì„œ ì–´ëŒ‘í„°ë¥¼ ë‹¬ë„ë¡
 		
-		JButton goMainScreen = new JButton("¡ç"); //µÚ·Î°¡±â ¹öÆ°
-		Image[] Player_img; //ÇÃ·¹ÀÌ¾î ¾Ö´Ï¸ŞÀÌ¼Ç Ç¥ÇöÀ» À§ÇØ ÀÌ¹ÌÁö¸¦ ¹è¿­·Î ¹ŞÀ½
+		JButton goMainScreen = new JButton("â†"); //ë’¤ë¡œê°€ê¸° ë²„íŠ¼
+		Image[] Player_img; //í”Œë ˆì´ì–´ ì• ë‹ˆë©”ì´ì…˜ í‘œí˜„ì„ ìœ„í•´ ì´ë¯¸ì§€ë¥¼ ë°°ì—´ë¡œ ë°›ìŒ
 		
 		public GamePanel() {
 			init();
 			b_gameStart = true;
 			gameInit();
 			gameStart();
-			//Å°
+			//í‚¤
 	
 		}
 	
 		void init() {
 			setLayout(null);
-			goMainScreen.setBounds(Main.MAIN_WIDTH-63, 0, 50, 30); //ÀÌ°Å ÇÏ·Á¸é setLayout(null); ÇØÁà¾ßÇÔ 
+			goMainScreen.setBounds(Main.MAIN_WIDTH-63, 0, 50, 30); //ì´ê±° í•˜ë ¤ë©´ setLayout(null); í•´ì¤˜ì•¼í•¨ 
 			goMainScreen.addActionListener(new ActionListener(){
 		        public void actionPerformed(ActionEvent e) {
-		        		System.out.println("¸ŞÀÎÈ­¸éÀ¸·Î °¡´Â ¹öÆ° Å¬¸¯µÊ");
-		        		dispose(); //ÇÁ·¹ÀÓ ¾ø¾Ö±â(?)
+		        		System.out.println("ë©”ì¸í™”ë©´ìœ¼ë¡œ ê°€ëŠ” ë²„íŠ¼ í´ë¦­ë¨");
+		        		dispose(); //í”„ë ˆì„ ì—†ì• ê¸°(?)
 		        		new Main();
 		        }});
 			add(goMainScreen);
@@ -99,7 +99,7 @@ public class playerTest extends JFrame {
 			player1 = new Player(0, 390);
 			player2 = new Player(Main.MAIN_WIDTH-300, 390);
 			File imageFile = new File("./img/playerTest.png");
-			if(!imageFile.exists()) {System.out.println("ÆÄÀÏ ¾È¿­¸²");}
+			if(!imageFile.exists()) {System.out.println("íŒŒì¼ ì•ˆì—´ë¦¼");}
 			try {
 				player1_img = ImageIO.read(imageFile);
 			} catch (IOException e) {e.printStackTrace(); }
@@ -166,15 +166,15 @@ public class playerTest extends JFrame {
 			        g.dispose();
 			        bs.show();
 					//this.getGraphics().drawImage(mainImg, 0, 0, null);
-					//repaint(); //±×¸² ´Ù½Ã ±×¸®±â
+					//repaint(); //ê·¸ë¦¼ ë‹¤ì‹œ ê·¸ë¦¬ê¸°
 				}
 			}
 		}
 		
 		void KeyProcess() {
 			if(keyUp) {
-				//Á¡ÇÁ
-				//¸îÃÊ ÈÄ¿¡ ¶¥¹Ù´ÚÀ¸·Î
+				//ì í”„
+				//ëª‡ì´ˆ í›„ì— ë•…ë°”ë‹¥ìœ¼ë¡œ
 				player1.jumpingStart();
 				keyUp = false;
 			}
@@ -192,24 +192,24 @@ public class playerTest extends JFrame {
 			
 			public void keyTyped(KeyEvent e) {
 				if(b_gameStart) {
-					System.out.println("keyTyped"); // ÄÜ¼ÖÃ¢¿¡ ¸Ş¼Òµå ÀÌ¸§ Ãâ·Â
+					System.out.println("keyTyped"); // ì½˜ì†”ì°½ì— ë©”ì†Œë“œ ì´ë¦„ ì¶œë ¥
 				}
 			}
 	
 			public void keyPressed(KeyEvent e) {
 				if(b_gameStart) {
-					switch (e.getKeyCode()) { //Å° ÄÚµå ¾Ë¾Æ³»±â
+					switch (e.getKeyCode()) { //í‚¤ ì½”ë“œ ì•Œì•„ë‚´ê¸°
 						case KeyEvent.VK_UP:	keyUp = true;		break;
 						case KeyEvent.VK_LEFT:	keyLeft = true;		break;
 						case KeyEvent.VK_RIGHT:	keyRight = true;	break;
 					}
-					System.out.println("KeyPressed"); // ÄÜ¼ÖÃ¢¿¡ ¸Ş¼Òµå ÀÌ¸§ Ãâ·Â
+					System.out.println("KeyPressed"); // ì½˜ì†”ì°½ì— ë©”ì†Œë“œ ì´ë¦„ ì¶œë ¥
 				}
 			}
 	
 			public void keyReleased(KeyEvent e) {
 				if(b_gameStart) {
-					System.out.println("keyReleased"); // ÄÜ¼ÖÃ¢¿¡ ¸Ş¼Òµå ÀÌ¸§ Ãâ·Â
+					System.out.println("keyReleased"); // ì½˜ì†”ì°½ì— ë©”ì†Œë“œ ì´ë¦„ ì¶œë ¥
 				}
 			}//keyReleased END
 			

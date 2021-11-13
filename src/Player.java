@@ -1,8 +1,9 @@
-
 public class Player {
 	private float playerSpeed;
 	private float playerX;
 	private float playerY;
+	private int width;
+	private int height;
 	private long jumpStartSec;
 	private long jumpEndSec;
 	private boolean jumping;
@@ -10,44 +11,61 @@ public class Player {
 	private boolean down;
 	private int hp;
 	
-	//ª˝º∫µ…∂ß
-	Player(float playerX, float playerY){
+	//ÏÉùÏÑ±Îê†Îïå
+	Player(float playerX, float playerY, int width, int height, int hp){
 		jumping = false;
-		hp = 30;
+		this.hp = hp;
+		this.width = width;
+		this.height = height;
 		this.playerX = playerX;
 		this.playerY = playerY;
 	}
-	
-	//¡¬øÏ ¿Ãµø
-	void xMove(float playerX) {
-		this.playerX += playerX*8;
+	public int getHp() {
+		return hp;
+	}
+	public void hit(int hit) {
+		hp-=hit;
 	}
 	
-	//ªÛ«œ ¿Ãµø
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+
+	//Ï¢åÏö∞ Ïù¥Îèô
+	void xMove(float playerX) {
+		this.playerX += playerX*15;
+	}
+	
+	//ÏÉÅÌïò Ïù¥Îèô
 	void yMove(float playerY) {
 		this.playerY += playerY;
 	}
 	
-	//¡°«¡
+	//Ï†êÌîÑ
 	void jump() {
 
-		if(playerY >= 390-100 && up) {//¡°«¡
+		if(playerY >= Main.MAIN_HEIGHT-height-100 && up) {//Ï†êÌîÑ
 			jumpEndSec = System.currentTimeMillis();
-			if(jumpEndSec - jumpStartSec >= 1.5) //ø√∂Û∞®
+			if(jumpEndSec - jumpStartSec >= 0.00005) //Ïò¨ÎùºÍ∞ê
 			{
-				yMove(-1);
+				yMove(-2);
 				jumpStartSec = System.currentTimeMillis();
-				if(playerY == 390 - 100) { up = false; down = true; }
+				if(playerY == Main.MAIN_HEIGHT-height-100) { up = false; down = true; }
 			}
 		} 
 		
-		if(playerY <= 390 && down) { //≥´«œ
+		if(playerY <= Main.MAIN_HEIGHT-height && down) { //ÎÇôÌïò
 			jumpEndSec = System.currentTimeMillis();
-			if(jumpEndSec - jumpStartSec >= 2) //≥ª∑¡ø»
+			if(jumpEndSec - jumpStartSec >= 0.00001) //ÎÇ¥Î†§Ïò¥
 			{
-				yMove(1);
+				yMove(2);
 				jumpStartSec = System.currentTimeMillis();
-				if(playerY == 390) { down = false; }
+				if(playerY == Main.MAIN_HEIGHT-height) { down = false; }
 			}
 		}
 		
