@@ -185,13 +185,11 @@ public class test extends Canvas implements Runnable, KeyListener {
 
     int hpbar = 300;
     public void render() {
-        BufferStrategy bs = getBufferStrategy();
+        BufferStrategy bs = getBufferStrategy(); //Canvas 클래스와 연계해서 더블 버퍼링을 구현(
         if (bs == null) {
-            createBufferStrategy(3);
+            createBufferStrategy(2);//BufferStrategy영역이 두개 생성됨.
             return;
         }
-
-
 
         Graphics g = bs.getDrawGraphics();
 
