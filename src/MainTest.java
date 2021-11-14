@@ -49,8 +49,6 @@ public class MainTest extends JFrame{
 		
 	}
 
-
-
 	//액션 리스너 인터페이스 변수에 구현 객체를 만들어서 대입한다. (버튼을 클릭했을시에 이 기능을 실행시킨다.)
 	public ActionListener buttonClick = new ActionListener(){
         public void actionPerformed(ActionEvent e) {

@@ -99,7 +99,9 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 			
 			player1 = new Player(0, Main.MAIN_HEIGHT-player1_height, player1_width, player1_height, hp_width);
 			player2 = new Player(Main.MAIN_WIDTH-player2_width, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width);
-    		
+    		player1.setOtherPlayer(player2);
+    		player2.setOtherPlayer(player1);
+			
     		//플레이어 hp바 만들기
 		    player1_hpImg = new BufferedImage(hp_width, hp_height, BufferedImage.TYPE_INT_RGB);
 		    player2_hpImg = new BufferedImage(hp_width, hp_height, BufferedImage.TYPE_INT_RGB);
@@ -116,8 +118,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE ));
-
-
 
         frame = new JFrame(NAME);
 
@@ -184,7 +184,8 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 //                delta -= 0.00001;
 //                shouldRender = true;
 //            }
-
+            player1.update();
+            player2.update();
             if (shouldRender) {
                 frames++;
                 if(player1.getJumping()) {
@@ -206,16 +207,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 	            }
             }
         }
-    }
-
-    private boolean collisionCheck(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2) {
-    	int space = 30;
-    	if(x1+w1-space > x2+space && y1+h1 >= y2 ) {
-    		return true;
-    	}else if(x1+space > x2+w2-space && y1+h1 >= y2) {
-    		return true;
-    	}
-    	return false;
     }
 
 
@@ -281,57 +272,17 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 		if(!gameStop) {
 			switch (e.getKeyCode()) { //키 코드 알아내기
 			//게임 관련 키
-			case KeyEvent.VK_F5: 	gameStop = true;  break;
+			case KeyEvent.VK_F5: 		gameStop = true;  			break;
 			//플레이어1
-			case KeyEvent.VK_F4:	player1.hit(100);		break;
-			case KeyEvent.VK_UP:
-				if(!collisionCheck(player1.getX(), player1.getY(), player2.getX(), player2.getY(), player1.getWidth(), player1.getHeight(), 
-						player2.getWidth(), player2.getHeight())) {
-					player1.jumpingStart();	
-				}
-			
-			break;
-			case KeyEvent.VK_LEFT:	
-				if(!collisionCheck(player1.getX(), player1.getY(), player2.getX(), player2.getY(), player1.getWidth(), player1.getHeight(), 
-						player2.getWidth(), player2.getHeight())) {
-					player1.xMove(-1);	
-				}else {
-					player1.xMove(1);
-				}
-				break;
-			case KeyEvent.VK_RIGHT:	
-				if(!collisionCheck(player1.getX(), player1.getY(), player2.getX(), player2.getY(), player1.getWidth(), player1.getHeight(), 
-						player2.getWidth(), player2.getHeight())) {
-					player1.xMove(1);	
-				}else {
-					player1.xMove(-1);
-				}
-				break;
+			case KeyEvent.VK_F4:		player1.hit(100);			break;
+			case KeyEvent.VK_UP:		player1.jumpingStart();		break;
+			case KeyEvent.VK_LEFT:		player1.setLeft(true);		break;
+			case KeyEvent.VK_RIGHT:		player1.setRight(true);		break;
 			//플레이어 2
-			case KeyEvent.VK_F3:	player2.hit(100);		break;
-			case KeyEvent.VK_W:	
-				if(!collisionCheck(player1.getX(), player1.getY(), player2.getX(), player2.getY(), player1.getWidth(), player1.getHeight(), 
-						player2.getWidth(), player2.getHeight())) {
-					player2.jumpingStart();
-				}
-				break;
-			case KeyEvent.VK_A:	
-				if(!collisionCheck(player1.getX(), player1.getY(), player2.getX(), player2.getY(), player1.getWidth(), player1.getHeight(), 
-						player2.getWidth(), player2.getHeight())) {
-					player2.xMove(-1);
-				}else {
-					player2.xMove(1);
-				}
-				
-				break;
-			case KeyEvent.VK_D:
-				if(!collisionCheck(player1.getX(), player1.getY(), player2.getX(), player2.getY(), player1.getWidth(), player1.getHeight(), 
-						player2.getWidth(), player2.getHeight())) {
-					player2.xMove(1);
-				}else {
-					player2.xMove(-1);
-				}
-				break;
+			case KeyEvent.VK_F3:		player2.hit(100);			break;
+			case KeyEvent.VK_W:			player2.jumpingStart();		break;
+			case KeyEvent.VK_A:			player2.setLeft(true);		break;
+			case KeyEvent.VK_D:			player2.setRight(true);		break;
 			}
 		}
 		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
