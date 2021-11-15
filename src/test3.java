@@ -184,10 +184,11 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 //                delta -= 0.00001;
 //                shouldRender = true;
 //            }
-            player1.update();
-            player2.update();
+            
             if (shouldRender) {
                 frames++;
+                player1.update();
+                player2.update();
                 if(player1.getJumping()) {
                 	player1.jump();
                 }

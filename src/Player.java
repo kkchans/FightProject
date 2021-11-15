@@ -109,13 +109,16 @@ public class Player {
 	void update() {
 		if(left && !collisionCheck()) { //충돌 안했고 왼쪽으로 이동
 			xMove(-1);
-			left = false;
+		}else if(left&& collisionCheck()) {
+			xMove(3);
 		}
 		if(right && !collisionCheck()) { //충돌 안했고 오른으로 이동
 			xMove(1);
-			right = false;
+		}else if(right&& collisionCheck()) {
+			xMove(-3);
 		}
-		
+		right = false;
+		left = false;
 	}
 	
 	void jumpingStart() {
