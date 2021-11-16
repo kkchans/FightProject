@@ -6,7 +6,18 @@ import javax.swing.*;
 public class Main extends JFrame{
 	static final int MAIN_WIDTH = 1280; // 메인화면 넓이
 	static final int MAIN_HEIGHT = 650; // 메인화면 높이
+<<<<<<< HEAD
 
+=======
+	//key ~~
+	static final int VK_A = 0x41;
+	static final int VK_D = 0x44;
+	static final int VK_S = 0x53;
+	static final int VK_W = 0x57;
+	static final int VK_LSHIFT  = 0xA0;
+	static final int VK_RSHIFT  = 0xA1;
+	static final int VK_H = 0x68;
+>>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
 	
 	MainScreen mainScreen; //메인 화면 패널
 	HowToGameScreen howGameScreen; //게임 방법 화면 패널

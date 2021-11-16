@@ -28,6 +28,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     public static final int HEIGHT = Main.MAIN_HEIGHT;
     public static final int SCALE = 1;
     public static final String NAME = "Game";
+	static final int VK_LSHIFT  = 0xA0;
     boolean gameStart = true;
 
 
@@ -192,6 +193,21 @@ public class test3 extends Canvas implements Runnable, KeyListener {
                 frames++;
                 player1.update();
                 player2.update();
+<<<<<<< HEAD
+=======
+                if(player1.getJumping()) {
+                	player1.jump();
+                }
+                if(player2.getJumping()) {
+                	player2.jump();
+                }
+                if(player1.getBook()) {
+                	player1.bookskil();
+                }
+                if(player2.getBook()) {
+                	player2.bookskil();
+                }
+>>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
                 render();
             }
 
@@ -276,17 +292,40 @@ int t = 0;
 				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) { player2.hit(100); }
 			break;
 			//플레이어1
+<<<<<<< HEAD
 			case KeyEvent.VK_F3:		player1.hit(100);			break;
 			case KeyEvent.VK_W:			player1.jumpingStart();		break;
 			case KeyEvent.VK_A:			player1.setLeft(true);		break;
 			case KeyEvent.VK_D:			player1.setRight(true);		break;
 			case KeyEvent.VK_S:			player1.setJumping(false);	break;
+=======
+			case KeyEvent.VK_F4:		player1.hit(100);			break;
+			case KeyEvent.VK_UP:		player1.jumpingStart();		break;
+			case KeyEvent.VK_LEFT:		player1.setLeft(true);		break;
+			case KeyEvent.VK_RIGHT:		player1.setRight(true);		break;
+			case KeyEvent.VK_SHIFT:		player1.bookskilStart();	break;
+			case KeyEvent.VK_F:	
+				if(player2.getBook()==true) break;
+				else player2.hit(player1.fist(player2.getX()));		break;
+			case KeyEvent.VK_G:	
+				if(player2.getBook()==true) break;
+				else player2.hit(player1.noteBook(player2.getX()));		break;
+>>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
 			//플레이어 2
+<<<<<<< HEAD
 			case KeyEvent.VK_F4:		player2.hit(100);			break;
 			case KeyEvent.VK_UP:		player2.jumpingStart();		break;
 			case KeyEvent.VK_LEFT:		player2.setLeft(true);		break;
 			case KeyEvent.VK_RIGHT:		player2.setRight(true);		break;
 			case KeyEvent.VK_DOWN:		player2.setJumping(false);	break;
+=======
+			case KeyEvent.VK_F3:		player2.hit(100);			break;
+			case KeyEvent.VK_W:			player2.jumpingStart();		break;
+			case KeyEvent.VK_A:			player2.setLeft(true);		break;
+			case KeyEvent.VK_D:			player2.setRight(true);		break;
+			//case Main.VK_RSHIFT: 		player2.bookskilStart();	break;
+			
+>>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
 			}
 		}
 		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
