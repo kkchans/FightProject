@@ -28,6 +28,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     public static final int HEIGHT = Main.MAIN_HEIGHT;
     public static final int SCALE = 1;
     public static final String NAME = "Game";
+	static final int VK_LSHIFT  = 0xA0;
     boolean gameStart = true;
 
 
@@ -195,6 +196,12 @@ public class test3 extends Canvas implements Runnable, KeyListener {
                 if(player2.getJumping()) {
                 	player2.jump();
                 }
+                if(player1.getBook()) {
+                	player1.bookskil();
+                }
+                if(player2.getBook()) {
+                	player2.bookskil();
+                }
                 render();
             }
 
@@ -279,11 +286,20 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 			case KeyEvent.VK_UP:		player1.jumpingStart();		break;
 			case KeyEvent.VK_LEFT:		player1.setLeft(true);		break;
 			case KeyEvent.VK_RIGHT:		player1.setRight(true);		break;
+			case KeyEvent.VK_SHIFT:		player1.bookskilStart();	break;
+			case KeyEvent.VK_F:	
+				if(player2.getBook()==true) break;
+				else player2.hit(player1.fist(player2.getX()));		break;
+			case KeyEvent.VK_G:	
+				if(player2.getBook()==true) break;
+				else player2.hit(player1.noteBook(player2.getX()));		break;
 			//플레이어 2
 			case KeyEvent.VK_F3:		player2.hit(100);			break;
 			case KeyEvent.VK_W:			player2.jumpingStart();		break;
 			case KeyEvent.VK_A:			player2.setLeft(true);		break;
 			case KeyEvent.VK_D:			player2.setRight(true);		break;
+			//case Main.VK_RSHIFT: 		player2.bookskilStart();	break;
+			
 			}
 		}
 		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력

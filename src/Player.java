@@ -6,11 +6,14 @@ public class Player {
 	private int height;
 	private long jumpStartSec;
 	private long jumpEndSec;
+	private long bookStartSec;
+	private long bookEndSec;
 	private boolean jumping;
 	private boolean up;
 	private boolean down;
 	private boolean left;
 	private boolean right;
+	private boolean book;
 	private Player otherPlayer;
 	
 	private int hp;
@@ -140,6 +143,38 @@ public class Player {
 	public void setRight(boolean right) {
 		this.right = right;
 	}
+	public boolean getBook() {
+		return book;
+	}
+	void bookskilStart() {
+		book = true;
+		bookStartSec = System.currentTimeMillis();
+		System.out.println("book 활성화");
+	}
+	void bookskil() {
+		bookEndSec = System.currentTimeMillis();
+		if((bookEndSec - bookStartSec)/1000 >= 1) { 
+			book = false;
+			System.out.println("book 끝남");
+		}
+	}
 	
+	int fist(int x) {
+		System.out.println("fist 함");
+		if(this.x + 200 > x && this.x - 200 < x) {
+			System.out.println("맞음");
+			return 5;
+		}
+		return 0;
+	}
+	
+	int noteBook(int x) {
+		System.out.println("noteBook 함");
+		if(this.x + 200 > x && this.x - 200 < x) {
+			System.out.println("맞음");
+			return 15;
+		}
+		return 0;
+	}
 
 }
