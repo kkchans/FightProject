@@ -58,21 +58,23 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private BufferedImage player2_hpImg;
     private int hp_width = 500;
     private int hp_height = 50;
-    
+	int imgWidth, imgHeight;    
     public test3() {
     	image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-    	int imgWidth, imgHeight;
+
 		try {
 			//background이미지 로드
 			image = ImageIO.read(new File("./img/stage1.jpg"));
     		imgWidth = image.getWidth();
     		imgHeight = image.getHeight();
-    		background_img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+    		background_img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
+    	    pixels = ((DataBufferInt) background_img.getRaster().getDataBuffer()).getData();
     		for (int x=0; x<imgWidth; x++) {
-    	        for (int y=0; y<imgHeight; y++) {
-    	        	background_img.setRGB(x, y, image.getRGB(x, y));
-    	        }
-    	    }
+	        for (int y=0; y<imgHeight; y++) {
+	        	background_img.setRGB(x, y, image.getRGB(x, y));
+	        	//pixels[(x/imgWidth)*y+x] = image.getRGB(x, y);
+	        }
+	    }
     		
     		//player이미지 로드, 생성
     		image = ImageIO.read( new File("./img/playerTest.png"));
@@ -101,6 +103,8 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 			player2 = new Player(Main.MAIN_WIDTH-player2_width, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width);
     		player1.setOtherPlayer(player2);
     		player2.setOtherPlayer(player1);
+    		player1.setPixels(pixels);
+    		player2.setPixels(pixels);
 			
     		//플레이어 hp바 만들기
 		    player1_hpImg = new BufferedImage(hp_width, hp_height, BufferedImage.TYPE_INT_RGB);
@@ -114,7 +118,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 			
 		} catch (Exception e) {e.printStackTrace(); }
     	    
-    	    pixels = ((DataBufferInt) background_img.getRaster().getDataBuffer()).getData();
         setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE ));
@@ -178,30 +181,24 @@ public class test3 extends Canvas implements Runnable, KeyListener {
             delta += (now - lastTime) / nsPerTick;
             lastTime = now;
             shouldRender = true;
-//            if (delta >= 0.00001) {
-//                ticks++;
-//                tick();
-//                delta -= 0.00001;
-//                shouldRender = true;
-//            }
+            if (delta >= 0.00001) {
+                ticks++;
+                tick();
+                delta -= 0.00001;
+                shouldRender = true;
+            }
             
             if (shouldRender) {
                 frames++;
                 player1.update();
                 player2.update();
-                if(player1.getJumping()) {
-                	player1.jump();
-                }
-                if(player2.getJumping()) {
-                	player2.jump();
-                }
                 render();
             }
 
 
             if(!gameStop) { //게임을 멈추지 않았을 때(게임을 멈추면 하지 말아야 할 것들)
-	            if (System.currentTimeMillis() - lastTimer >= 1000) {
-	                lastTimer += 1000;
+	            if (System.currentTimeMillis() - lastTimer >= 100) {
+	                lastTimer += 100;
 	                System.out.println(ticks + " ticks, " + frames + " frames");
 	                frames = 0;
 	                ticks = 0;
@@ -210,29 +207,29 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         }
     }
 
-
+int t = 0;
     public void tick() {
         //tickCount++;
 
     	
-
-        for (int i = 0; i < pixels.length; i++) {
-            pixels[i] = pixels[i] + tickCount;
-        }
+    	if(t<=200) {
+	        for (int i = 0; i < pixels.length; i++) {
+	            pixels[i] = pixels[i]-1;
+	        }
+	    }
+    	t++;
     }
 
-    Graphics g;
-    BufferStrategy bs;
     public void render() {
-        bs = getBufferStrategy(); //Canvas 클래스와 연계해서 더블 버퍼링을 구현
+    	 BufferStrategy bs = getBufferStrategy(); //Canvas 클래스와 연계해서 더블 버퍼링을 구현
         if (bs == null) {
-            createBufferStrategy(2);//BufferStrategy영역이 두개 생성됨.
+            createBufferStrategy(3);//BufferStrategy영역이 두개 생성됨.
             return;
         }
 
-        g = bs.getDrawGraphics();
+        Graphics g = bs.getDrawGraphics();
 
-        g.setColor(Color.black);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
         
         //플레이어 hp바
@@ -250,15 +247,15 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 	        	}
 		    }
         }
+        g.fillRect(0, 0, getWidth(), getHeight());
       //플레이어 hp바 END
-        
         g.drawImage(background_img, 0, 0, getWidth(), getHeight(), null);
         g.drawImage(player1_img, player1.getX(), player1.getY(), player1_width, player1_height, null);
         g.drawImage(player2_img, player2.getX(), player2.getY(), player2_width, player2_height, null);
         g.drawImage(player1_hpImg, 30, 30, hp_width, hp_height, null);
         g.drawImage(player2_hpImg, Main.MAIN_WIDTH-hp_width-30, 30, hp_width, hp_height, null);
  
-        //g.dispose();
+        g.dispose();
         bs.show();
     }
 
@@ -274,16 +271,22 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 			switch (e.getKeyCode()) { //키 코드 알아내기
 			//게임 관련 키
 			case KeyEvent.VK_F5: 		gameStop = true;  			break;
+			case KeyEvent.VK_SHIFT: 
+				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) { player1.hit(100); }
+				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) { player2.hit(100); }
+			break;
 			//플레이어1
-			case KeyEvent.VK_F4:		player1.hit(100);			break;
-			case KeyEvent.VK_UP:		player1.jumpingStart();		break;
-			case KeyEvent.VK_LEFT:		player1.setLeft(true);		break;
-			case KeyEvent.VK_RIGHT:		player1.setRight(true);		break;
+			case KeyEvent.VK_F3:		player1.hit(100);			break;
+			case KeyEvent.VK_W:			player1.jumpingStart();		break;
+			case KeyEvent.VK_A:			player1.setLeft(true);		break;
+			case KeyEvent.VK_D:			player1.setRight(true);		break;
+			case KeyEvent.VK_S:			player1.setJumping(false);	break;
 			//플레이어 2
-			case KeyEvent.VK_F3:		player2.hit(100);			break;
-			case KeyEvent.VK_W:			player2.jumpingStart();		break;
-			case KeyEvent.VK_A:			player2.setLeft(true);		break;
-			case KeyEvent.VK_D:			player2.setRight(true);		break;
+			case KeyEvent.VK_F4:		player2.hit(100);			break;
+			case KeyEvent.VK_UP:		player2.jumpingStart();		break;
+			case KeyEvent.VK_LEFT:		player2.setLeft(true);		break;
+			case KeyEvent.VK_RIGHT:		player2.setRight(true);		break;
+			case KeyEvent.VK_DOWN:		player2.setJumping(false);	break;
 			}
 		}
 		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력

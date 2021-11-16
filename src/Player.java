@@ -12,6 +12,7 @@ public class Player {
 	private boolean left;
 	private boolean right;
 	private Player otherPlayer;
+	private int[] pixels;
 	
 	private int hp;
 	
@@ -44,7 +45,9 @@ public class Player {
 	public int getHeight() {
 		return height;
 	}
-
+	void setPixels(int[] pixels) {
+		this.pixels = pixels;
+	}
 
 	//좌우 이동
 	void xMove(float playerX) {
@@ -56,11 +59,15 @@ public class Player {
 		this.y += playerY;
 	}
 	
+	void throwMouse() {
+		//마우스 던지기
+		
+	}
+	
 	//점프
 	void jump() {
-
 		if(!collisionCheck()) { //충돌 안했을때
-			if(y >= Main.MAIN_HEIGHT-height-100 && up) {//점프
+			if(y >= Main.MAIN_HEIGHT-height-100 && up && jumping)  {//점프
 				jumpEndSec = System.currentTimeMillis();
 				if(jumpEndSec - jumpStartSec >= 0.00005) //올라감
 				{
@@ -74,7 +81,7 @@ public class Player {
 				{
 					yMove(2);
 					jumpStartSec = System.currentTimeMillis();
-					if(y == Main.MAIN_HEIGHT-height) { down = false; }
+					if(y == Main.MAIN_HEIGHT-height) { down = false; jumping = false;}
 				}
 			}
 		}
@@ -105,8 +112,13 @@ public class Player {
  
     	return false;
     }
-	
+
 	void update() {
+		
+		if(jumping) {
+        	jump();
+        }
+
 		if(left && !collisionCheck()) { //충돌 안했고 왼쪽으로 이동
 			xMove(-1);
 		}else if(left&& collisionCheck()) {
@@ -139,6 +151,14 @@ public class Player {
 	}
 	public void setRight(boolean right) {
 		this.right = right;
+	}
+
+	public void setJumping(boolean jumping) {
+		this.jumping = jumping;
+		if(!jumping) {
+			this.down = true;
+			this.up = false;
+		}
 	}
 	
 
