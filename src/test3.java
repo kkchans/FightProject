@@ -322,12 +322,10 @@ int t = 0;
 			//플레이어 두명 주먹
 			case KeyEvent.VK_SHIFT: 
 				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) { //주먹
-					if(player1.getBook()==true) break;
-					else player1.hit(player2.fist(player1.getX()));		break;
+					player2.hit(player1.fist(player2.getX()));		break;
 				}
 				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) { //주먹
-					if(player2.getBook()==true) break;
-					else player1.hit(player2.fist(player1.getX()));	break;
+					player1.hit(player2.fist(player1.getX()));	break;
 				}
 			break;
 			
@@ -338,9 +336,7 @@ int t = 0;
 			case KeyEvent.VK_E:			player1.throwMouse();		break; //마우스 던지기
 			case KeyEvent.VK_R:			player1.pullOther();		break; //다른 플레이어 내쪽으로 이동
 			case KeyEvent.VK_F:			player1.bookskilStart();	break; //방어
-			case KeyEvent.VK_Q:		//노트북 공격
-				if(player2.getBook()==true) break;
-				else player2.hit(player1.noteBook(player2.getX()));		break;
+			case KeyEvent.VK_Q:			player2.hit(player1.noteBook(player2.getX()));	break; //노트북 공격
 			
 			//플레이어 2
 			case KeyEvent.VK_UP:		player2.jumpingStart();		break; //점프
@@ -349,9 +345,7 @@ int t = 0;
 			case 47:					player2.throwMouse();		break; //마우스 던지기(/)
 			case 222:					player2.pullOther();		break; //다른 플레이어 내쪽으로 이동(따옴표. ')
 			case 46:					player2.bookskilStart();	break; //방어
-			case KeyEvent.VK_ENTER:		//노트북 공격
-				if(player1.getBook()==true) break;
-				else player1.hit(player2.noteBook(player1.getX()));		break;
+			case KeyEvent.VK_ENTER:		player1.hit(player2.noteBook(player1.getX()));	break; //노트북 공격
 			}
 		}
 		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
