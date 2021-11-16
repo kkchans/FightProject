@@ -14,13 +14,18 @@ public class Player {
 	private boolean left;
 	private boolean right;
 	private boolean book;
+	private boolean flyMouse;
+	private int mouseX=0, mouseY=400;//마우스 좌표
+	private int mouseSpeed = 15;
 	private Player otherPlayer;
-	private int[] pixels;
+	private int[] mousePixels, preMousePixels;
+	private boolean pullOther;
+	private int location; //왼쪽이면 -1, 1
 	
 	private int hp;
 	
 	//생성될때
-	Player(float x, float y, int width, int height, int hp){
+	Player(float x, float y, int width, int height, int hp, int location){
 		jumping = false;
 		this.hp = hp;
 		this.width = width;
@@ -28,6 +33,7 @@ public class Player {
 		this.x = x;
 		this.y = y;
 		speed = 30;
+		this.location = location;
 	}
 	
 	void setOtherPlayer(Player player) {
@@ -48,9 +54,12 @@ public class Player {
 	public int getHeight() {
 		return height;
 	}
-	void setPixels(int[] pixels) {
-		this.pixels = pixels;
+	void setMousePixels(int[] pixels, int[] prePixels) {
+		this.mousePixels = pixels;
+		this.preMousePixels = prePixels;
 	}
+	
+	
 
 	//좌우 이동
 	void xMove(float playerX) {
@@ -60,11 +69,6 @@ public class Player {
 	//상하 이동
 	void yMove(float playerY) {
 		this.y += playerY;
-	}
-	
-	void throwMouse() {
-		//마우스 던지기
-		
 	}
 	
 	//점프
@@ -121,7 +125,10 @@ public class Player {
 		if(jumping) {
         	jump();
         }
-
+		flyMouse();
+		if(pullOther) {
+			pullingOther();
+		}
 		if(left && !collisionCheck()) { //충돌 안했고 왼쪽으로 이동
 			xMove(-1);
 		}else if(left&& collisionCheck()) {
@@ -155,14 +162,14 @@ public class Player {
 	public void setRight(boolean right) {
 		this.right = right;
 	}
-<<<<<<< HEAD
-
+	
 	public void setJumping(boolean jumping) {
 		this.jumping = jumping;
 		if(!jumping) {
 			this.down = true;
 			this.up = false;
-=======
+		}
+	}
 	public boolean getBook() {
 		return book;
 	}
@@ -176,7 +183,6 @@ public class Player {
 		if((bookEndSec - bookStartSec)/1000 >= 1) { 
 			book = false;
 			System.out.println("book 끝남");
->>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
 		}
 	}
 	
@@ -198,4 +204,73 @@ public class Player {
 		return 0;
 	}
 
+	public int getMouseX() {
+		return mouseX;
+	}
+
+
+	public int getMouseY() {
+		return mouseY;
+	}
+
+	private boolean mouseCollisionChk() {
+    	int space = 30;
+    	// 마우스랑 상대방 닿았는지
+    	if(mouseX <= otherPlayer.x+space && mouseX+width >= otherPlayer.x+space) { //충돌됨.
+    		return true;
+    	}else if(mouseX > otherPlayer.x+space && mouseX <= otherPlayer.x+space+otherPlayer.width-space) { //충돌됨. (플러이어가 오른쪽일떄)
+    		return true;
+    	}
+ 
+    	return false;
+    }
+
+	void pullingOther() {
+		//상대방 내쪽으로 끌어오는중
+		
+		if(pullOther && !collisionCheck()) { //끌어오는중이고 충돌 X
+			otherPlayer.xMove(location);
+		}
+		if(pullOther && collisionCheck()) { //끌어오는중이고 충돌 
+			pullOther = false;
+		}	
+	}
+	
+	void pullOther() {
+		//상대방 내쪽으로 끌어오기
+		//둘의 거리가 좁을때만 가능하게 하기
+		pullOther = true;
+		
+	}
+	
+	void throwMouse() {
+		//마우스 던지기 시작
+		flyMouse = true;
+		//마우스 위치 세팅
+        mouseX = (int)x;
+		//마우스 보이게 함
+		for (int i = 0; i < mousePixels.length; i++) {
+            mousePixels[i] = preMousePixels[i];
+        }
+	}
+	
+	public void flyMouse() {
+		//마우스 던지는중
+		if(flyMouse) {
+			if(mouseCollisionChk()) { //상대방한테 마우스 닿았을때
+				//충돌
+				flyMouse = false;
+				//마우스 없애기.
+		        for (int i = 0; i < mousePixels.length; i++) {
+		            mousePixels[i] =  0;
+		        }
+				//상대방 피 깎기
+				otherPlayer.hit(100);
+			}
+			else{
+				mouseX+=((location*-1)*mouseSpeed); //location으로 플레이어의 위치에 따라 달라지도록 함
+			}
+		}
+	}
+	
 }

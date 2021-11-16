@@ -23,7 +23,6 @@ import javax.swing.JFrame;
 public class test3 extends Canvas implements Runnable, KeyListener {
 
 	//test
-
     public static final int WIDTH = Main.MAIN_WIDTH;
     public static final int HEIGHT = Main.MAIN_HEIGHT;
     public static final int SCALE = 1;
@@ -49,6 +48,9 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private BufferedImage image;
     private BufferedImage background_img;
     private int[] pixels;
+    private int[] preMousePixels;
+    private int[] p1mousePixels;
+    private int[] p2mousePixels;
    
     //플레이어 관련
     Player player1;
@@ -57,9 +59,12 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     int player2_width, player2_height;
     private BufferedImage player1_hpImg;
     private BufferedImage player2_hpImg;
+    private BufferedImage p1_mouse_img;
+    private BufferedImage p2_mouse_img;
     private int hp_width = 500;
     private int hp_height = 50;
-	int imgWidth, imgHeight;    
+	int imgWidth, imgHeight;  
+	int mouseW, mouseH; //마우스의 크기  
     public test3() {
     	image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
@@ -71,11 +76,10 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     		background_img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
     	    pixels = ((DataBufferInt) background_img.getRaster().getDataBuffer()).getData();
     		for (int x=0; x<imgWidth; x++) {
-	        for (int y=0; y<imgHeight; y++) {
-	        	background_img.setRGB(x, y, image.getRGB(x, y));
-	        	//pixels[(x/imgWidth)*y+x] = image.getRGB(x, y);
-	        }
-	    }
+		        for (int y=0; y<imgHeight; y++) {
+		        	background_img.setRGB(x, y, image.getRGB(x, y));
+		        }
+		    }
     		
     		//player이미지 로드, 생성
     		image = ImageIO.read( new File("./img/playerTest.png"));
@@ -93,19 +97,17 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     		player2_width = image.getWidth();
     		player2_height = image.getHeight();
     		player2_img = new BufferedImage(player1_width, player1_height, BufferedImage.TYPE_INT_ARGB);
-    		player2 = new Player(0, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width);
+    		//player2 = new Player(0, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width);
 			for (int x=0; x<player2_width; x++) {
     	        for (int y=0; y<player2_height; y++) {
     	        	player2_img.setRGB(x, y, image.getRGB(x, y));
     	        }
     	    }
 			
-			player1 = new Player(0, Main.MAIN_HEIGHT-player1_height, player1_width, player1_height, hp_width);
-			player2 = new Player(Main.MAIN_WIDTH-player2_width, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width);
+			player1 = new Player(0, Main.MAIN_HEIGHT-player1_height, player1_width, player1_height, hp_width, -1);
+			player2 = new Player(Main.MAIN_WIDTH-player2_width, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width, 1);
     		player1.setOtherPlayer(player2);
     		player2.setOtherPlayer(player1);
-    		player1.setPixels(pixels);
-    		player2.setPixels(pixels);
 			
     		//플레이어 hp바 만들기
 		    player1_hpImg = new BufferedImage(hp_width, hp_height, BufferedImage.TYPE_INT_RGB);
@@ -116,6 +118,28 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     	        	player2_hpImg.setRGB(x, y, 16752343);
     	        }
     	    }
+    	    
+    	    //마우스 로드
+    	    image = ImageIO.read(new File("./img/flyMouse.png")); //이미지 로드
+    		mouseW = image.getWidth();	mouseH = image.getHeight(); //이미지 넓이, 높이 저장
+    		p1_mouse_img = new BufferedImage(mouseW, mouseH, BufferedImage.TYPE_INT_ARGB);
+    		p2_mouse_img = new BufferedImage(mouseW, mouseH, BufferedImage.TYPE_INT_ARGB);
+    	    p1mousePixels = ((DataBufferInt) p1_mouse_img.getRaster().getDataBuffer()).getData();
+    	    p2mousePixels = ((DataBufferInt) p2_mouse_img.getRaster().getDataBuffer()).getData();
+    	    for (int x=0; x<mouseW; x++) {
+		        for (int y=0; y<mouseH; y++) {
+		        	p1_mouse_img.setRGB(x, y, image.getRGB(x, y));
+		        	p2_mouse_img.setRGB(x, y, image.getRGB(x, y));
+		        }
+		    }
+    	    //원래의 마우스 픽셀값들을 저장해놓는다.
+    	    preMousePixels = new int[p1mousePixels.length];
+    	    for(int i = 0; i < p1mousePixels.length; i++) {
+    	    	preMousePixels[i] = p1mousePixels[i];
+    	    }
+    	    //마우스 픽셀 저장해두기
+    		player1.setMousePixels(p1mousePixels, preMousePixels);
+    		player2.setMousePixels(p2mousePixels, preMousePixels);
 			
 		} catch (Exception e) {e.printStackTrace(); }
     	    
@@ -148,6 +172,13 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        //마우스 첨엔 없음.
+        for (int i = 0; i < p1mousePixels.length; i++) {
+            p1mousePixels[i] =  0;
+            p2mousePixels[i] =  0;
+        }
+        
     }
 
 
@@ -193,8 +224,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
                 frames++;
                 player1.update();
                 player2.update();
-<<<<<<< HEAD
-=======
                 if(player1.getJumping()) {
                 	player1.jump();
                 }
@@ -207,7 +236,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
                 if(player2.getBook()) {
                 	player2.bookskil();
                 }
->>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
                 render();
             }
 
@@ -228,18 +256,20 @@ int t = 0;
         //tickCount++;
 
     	
-    	if(t<=200) {
-	        for (int i = 0; i < pixels.length; i++) {
-	            pixels[i] = pixels[i]-1;
-	        }
-	    }
-    	t++;
+    	 
+    	 //노란배경
+//    	if(t<=200) {
+//	        for (int i = 0; i < pixels.length; i++) {
+//	            pixels[i] = pixels[i]-1;
+//	        }
+//	    }
+//    	t++;
     }
 
     public void render() {
     	 BufferStrategy bs = getBufferStrategy(); //Canvas 클래스와 연계해서 더블 버퍼링을 구현
         if (bs == null) {
-            createBufferStrategy(3);//BufferStrategy영역이 두개 생성됨.
+            createBufferStrategy(3);//BufferStrategy영역이 세개 생성됨.
             return;
         }
 
@@ -266,11 +296,14 @@ int t = 0;
         g.fillRect(0, 0, getWidth(), getHeight());
       //플레이어 hp바 END
         g.drawImage(background_img, 0, 0, getWidth(), getHeight(), null);
+        g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), mouseW, mouseH, null);
+        g.drawImage(p2_mouse_img, player2.getMouseX(), player2.getMouseY(), mouseW, mouseH, null);
         g.drawImage(player1_img, player1.getX(), player1.getY(), player1_width, player1_height, null);
         g.drawImage(player2_img, player2.getX(), player2.getY(), player2_width, player2_height, null);
         g.drawImage(player1_hpImg, 30, 30, hp_width, hp_height, null);
         g.drawImage(player2_hpImg, Main.MAIN_WIDTH-hp_width-30, 30, hp_width, hp_height, null);
  
+        
         g.dispose();
         bs.show();
     }
@@ -285,47 +318,40 @@ int t = 0;
 	public void keyPressed(KeyEvent e) {
 		if(!gameStop) {
 			switch (e.getKeyCode()) { //키 코드 알아내기
-			//게임 관련 키
-			case KeyEvent.VK_F5: 		gameStop = true;  			break;
+			
+			//플레이어 두명 주먹
 			case KeyEvent.VK_SHIFT: 
-				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) { player1.hit(100); }
-				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) { player2.hit(100); }
+				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) { //주먹
+					if(player1.getBook()==true) break;
+					else player1.hit(player2.fist(player1.getX()));		break;
+				}
+				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) { //주먹
+					if(player2.getBook()==true) break;
+					else player1.hit(player2.fist(player1.getX()));	break;
+				}
 			break;
+			
 			//플레이어1
-<<<<<<< HEAD
-			case KeyEvent.VK_F3:		player1.hit(100);			break;
 			case KeyEvent.VK_W:			player1.jumpingStart();		break;
 			case KeyEvent.VK_A:			player1.setLeft(true);		break;
 			case KeyEvent.VK_D:			player1.setRight(true);		break;
-			case KeyEvent.VK_S:			player1.setJumping(false);	break;
-=======
-			case KeyEvent.VK_F4:		player1.hit(100);			break;
-			case KeyEvent.VK_UP:		player1.jumpingStart();		break;
-			case KeyEvent.VK_LEFT:		player1.setLeft(true);		break;
-			case KeyEvent.VK_RIGHT:		player1.setRight(true);		break;
-			case KeyEvent.VK_SHIFT:		player1.bookskilStart();	break;
-			case KeyEvent.VK_F:	
-				if(player2.getBook()==true) break;
-				else player2.hit(player1.fist(player2.getX()));		break;
-			case KeyEvent.VK_G:	
+			case KeyEvent.VK_E:			player1.throwMouse();		break; //마우스 던지기
+			case KeyEvent.VK_R:			player1.pullOther();		break; //다른 플레이어 내쪽으로 이동
+			case KeyEvent.VK_F:			player1.bookskilStart();	break; //방어
+			case KeyEvent.VK_Q:		//노트북 공격
 				if(player2.getBook()==true) break;
 				else player2.hit(player1.noteBook(player2.getX()));		break;
->>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
-			//플레이어 2
-<<<<<<< HEAD
-			case KeyEvent.VK_F4:		player2.hit(100);			break;
-			case KeyEvent.VK_UP:		player2.jumpingStart();		break;
-			case KeyEvent.VK_LEFT:		player2.setLeft(true);		break;
-			case KeyEvent.VK_RIGHT:		player2.setRight(true);		break;
-			case KeyEvent.VK_DOWN:		player2.setJumping(false);	break;
-=======
-			case KeyEvent.VK_F3:		player2.hit(100);			break;
-			case KeyEvent.VK_W:			player2.jumpingStart();		break;
-			case KeyEvent.VK_A:			player2.setLeft(true);		break;
-			case KeyEvent.VK_D:			player2.setRight(true);		break;
-			//case Main.VK_RSHIFT: 		player2.bookskilStart();	break;
 			
->>>>>>> branch 'master' of https://github.com/kkchans/FightProject.git
+			//플레이어 2
+			case KeyEvent.VK_UP:		player2.jumpingStart();		break; //점프
+			case KeyEvent.VK_LEFT:		player2.setLeft(true);		break; //왼쪽이동
+			case KeyEvent.VK_RIGHT:		player2.setRight(true);		break; //오른쪽이동
+			case 47:					player2.throwMouse();		break; //마우스 던지기(/)
+			case 222:					player2.pullOther();		break; //다른 플레이어 내쪽으로 이동(따옴표. ')
+			case 46:					player2.bookskilStart();	break; //방어
+			case KeyEvent.VK_ENTER:		//노트북 공격
+				if(player1.getBook()==true) break;
+				else player1.hit(player2.noteBook(player1.getX()));		break;
 			}
 		}
 		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
