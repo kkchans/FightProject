@@ -1,22 +1,17 @@
 public class Player {
 	private float speed;
-	private float x;
-	private float y;
-	private int width;
-	private int height;
+	private int mouseSpeed = 15;
+	private float x, y;
+	private int width, height;
 	private long jumpStartSec;
 	private long jumpEndSec;
 	private long bookStartSec;
 	private long bookEndSec;
 	private boolean jumping;
-	private boolean up;
-	private boolean down;
-	private boolean left;
-	private boolean right;
+	private boolean up, down, left, right;
 	private boolean book;
 	private boolean flyMouse;
 	private int mouseX=0, mouseY=400;//마우스 좌표
-	private int mouseSpeed = 15;
 	private Player otherPlayer;
 	private int[] mousePixels, preMousePixels;
 	private boolean pullOther;

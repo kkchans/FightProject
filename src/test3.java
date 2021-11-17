@@ -51,6 +51,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private int[] preMousePixels;
     private int[] p1mousePixels;
     private int[] p2mousePixels;
+    private int[] playerP;
    
     //플레이어 관련
     Player player1;
@@ -71,39 +72,21 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     	Sound.Play("./bgm/background_bgm.wav"); //배경 음악
 		try {
 			//background이미지 로드
-			image = ImageIO.read(new File("./img/stage1.jpg"));
-    		imgWidth = image.getWidth();
-    		imgHeight = image.getHeight();
-    		background_img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
-    	    pixels = ((DataBufferInt) background_img.getRaster().getDataBuffer()).getData();
-    		for (int x=0; x<imgWidth; x++) {
-		        for (int y=0; y<imgHeight; y++) {
-		        	background_img.setRGB(x, y, image.getRGB(x, y));
-		        }
-		    }
+    		background_img = ImageRelation.ImageLoad("./img/stage1.jpg");
+    		pixels = ((DataBufferInt) background_img.getRaster().getDataBuffer()).getData();
     		
-    		//player이미지 로드, 생성
+    		//플레이어들 이미지 로드 & 크기 설정//player이미지 로드, 생성
+    		player1_img = ImageRelation.ImageLoad("./img/playerTest.png");
+    		playerP = ((DataBufferInt) player1_img.getRaster().getDataBuffer()).getData();
+    		player2_img = ImageRelation.ImageLoad("./img/playerTest.png");
+    		
+    		//이미지 만들어지면 삭제될예정
     		image = ImageIO.read( new File("./img/playerTest.png"));
     		player1_width = image.getWidth();
     		player1_height = image.getHeight();
-    		player1_img = new BufferedImage(player1_width, player1_height, BufferedImage.TYPE_INT_ARGB);
-			for (int x=0; x<player1_width; x++) {
-    	        for (int y=0; y<player1_height; y++) {
-    	        	//if(image.getRGB(x, y) != 0x00) {
-    	        	player1_img.setRGB(x, y, image.getRGB(x, y));
-					//}
-    	        }
-    	    }
 			image = ImageIO.read( new File("./img/playerTest.png"));
     		player2_width = image.getWidth();
     		player2_height = image.getHeight();
-    		player2_img = new BufferedImage(player1_width, player1_height, BufferedImage.TYPE_INT_ARGB);
-    		//player2 = new Player(0, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width);
-			for (int x=0; x<player2_width; x++) {
-    	        for (int y=0; y<player2_height; y++) {
-    	        	player2_img.setRGB(x, y, image.getRGB(x, y));
-    	        }
-    	    }
 			
 			player1 = new Player(0, Main.MAIN_HEIGHT-player1_height, player1_width, player1_height, hp_width, -1);
 			player2 = new Player(Main.MAIN_WIDTH-player2_width, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width, 1);
@@ -121,29 +104,33 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     	    }
     	    
     	    //마우스 로드
+    	    p1_mouse_img = ImageRelation.ImageLoad("./img/flyMouse.png");
+    	    p2_mouse_img = ImageRelation.ImageLoad("./img/flyMouse.png");
+    	    
     	    image = ImageIO.read(new File("./img/flyMouse.png")); //이미지 로드
     		mouseW = image.getWidth();	mouseH = image.getHeight(); //이미지 넓이, 높이 저장
-    		p1_mouse_img = new BufferedImage(mouseW, mouseH, BufferedImage.TYPE_INT_ARGB);
-    		p2_mouse_img = new BufferedImage(mouseW, mouseH, BufferedImage.TYPE_INT_ARGB);
+
     	    p1mousePixels = ((DataBufferInt) p1_mouse_img.getRaster().getDataBuffer()).getData();
     	    p2mousePixels = ((DataBufferInt) p2_mouse_img.getRaster().getDataBuffer()).getData();
-    	    for (int x=0; x<mouseW; x++) {
-		        for (int y=0; y<mouseH; y++) {
-		        	p1_mouse_img.setRGB(x, y, image.getRGB(x, y));
-		        	p2_mouse_img.setRGB(x, y, image.getRGB(x, y));
-		        }
-		    }
+    	   
     	    //원래의 마우스 픽셀값들을 저장해놓는다.
     	    preMousePixels = new int[p1mousePixels.length];
     	    for(int i = 0; i < p1mousePixels.length; i++) {
     	    	preMousePixels[i] = p1mousePixels[i];
     	    }
-    	    //마우스 픽셀 저장해두기
+    	    //마우스 픽셀 플레이어한테 저장해두기
     		player1.setMousePixels(p1mousePixels, preMousePixels);
     		player2.setMousePixels(p2mousePixels, preMousePixels);
 			
+    		//마우스 첨엔 없음.
+            for (int i = 0; i < p1mousePixels.length; i++) {
+                p1mousePixels[i] =  0;
+                p2mousePixels[i] =  0;
+            }
+    		
 		} catch (Exception e) {e.printStackTrace(); }
     	    
+		//프레임
         setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE ));
@@ -173,13 +160,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
-        //마우스 첨엔 없음.
-        for (int i = 0; i < p1mousePixels.length; i++) {
-            p1mousePixels[i] =  0;
-            p2mousePixels[i] =  0;
-        }
-        
     }
 
 
@@ -257,8 +237,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 int t = 0;
     public void tick() {
         //tickCount++;
-
-    	
     	 
     	 //노란배경
 //    	if(t<=200) {
