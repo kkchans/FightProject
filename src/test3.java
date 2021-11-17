@@ -67,7 +67,8 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 	int mouseW, mouseH; //마우스의 크기  
     public test3() {
     	image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-
+    	Sound sound = new Sound(); //생성해야 음악 틀 수 있음
+    	Sound.Play("./bgm/background_bgm.wav"); //배경 음악
 		try {
 			//background이미지 로드
 			image = ImageIO.read(new File("./img/stage1.jpg"));
@@ -193,6 +194,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     public synchronized void stop() {
         running = false;
         gameStop = false;
+        Sound.PlayStop(); //음악 종료
     }
 
 
@@ -322,12 +324,12 @@ int t = 0;
 			//플레이어 두명 주먹
 			case KeyEvent.VK_SHIFT: 
 				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) { //주먹
-					if(player1.getBook()==true) break;
-					else player1.hit(player2.fist(player1.getX()));		break;
+					if(player2.getBook()==true) break;
+					else player2.hit(player1.fist(player2.getX()));		break;
 				}
 				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) { //주먹
-					if(player2.getBook()==true) break;
-					else player1.hit(player2.fist(player1.getX()));	break;
+					if(player1.getBook()==true) break;
+					else player1.hit(player2.fist(player1.getX())); break;
 				}
 			break;
 			

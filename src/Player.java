@@ -190,6 +190,7 @@ public class Player {
 		System.out.println("fist 함");
 		if(this.x + 200 > x && this.x - 200 < x) {
 			System.out.println("맞음");
+			Sound.fistBgm();
 			return 5;
 		}
 		return 0;
@@ -199,6 +200,7 @@ public class Player {
 		System.out.println("noteBook 함");
 		if(this.x + 200 > x && this.x - 200 < x) {
 			System.out.println("맞음");
+			Sound.fistBgm();
 			return 15;
 		}
 		return 0;
@@ -217,8 +219,10 @@ public class Player {
     	int space = 30;
     	// 마우스랑 상대방 닿았는지
     	if(mouseX <= otherPlayer.x+space && mouseX+width >= otherPlayer.x+space) { //충돌됨.
+    		Sound.fistBgm();
     		return true;
     	}else if(mouseX > otherPlayer.x+space && mouseX <= otherPlayer.x+space+otherPlayer.width-space) { //충돌됨. (플러이어가 오른쪽일떄)
+    		Sound.fistBgm();
     		return true;
     	}
  
