@@ -188,6 +188,7 @@ public class Player {
 	
 	int fist(int x) {
 		System.out.println("fist 함");
+		if(otherPlayer.book == true) return 0;
 		if(this.x + 200 > x && this.x - 200 < x) {
 			System.out.println("맞음");
 			Sound.fistBgm();
@@ -198,6 +199,7 @@ public class Player {
 	
 	int noteBook(int x) {
 		System.out.println("noteBook 함");
+		if(otherPlayer.book == true) return 0;
 		if(this.x + 200 > x && this.x - 200 < x) {
 			System.out.println("맞음");
 			Sound.fistBgm();
