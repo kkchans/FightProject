@@ -1,3 +1,6 @@
+//test3
+
+
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -300,10 +303,10 @@ int t = 0;
 			//플레이어 두명 주먹
 			case KeyEvent.VK_SHIFT: 
 				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) { //주먹
-					player2.hit(player1.fist(player2.getX()));		break;
+					player2.hit(player1.fist());		break;
 				}
 				if(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT) { //주먹
-					player1.hit(player2.fist(player1.getX()));	break;
+					player1.hit(player2.fist());	break;
 				}
 			break;
 			
@@ -314,7 +317,7 @@ int t = 0;
 			case KeyEvent.VK_E:			player1.throwMouse();		break; //마우스 던지기
 			case KeyEvent.VK_R:			player1.pullOther();		break; //다른 플레이어 내쪽으로 이동
 			case KeyEvent.VK_F:			player1.bookskilStart();	break; //방어
-			case KeyEvent.VK_Q:			player2.hit(player1.noteBook(player2.getX()));	break; //노트북 공격
+			case KeyEvent.VK_Q:			player2.hit(player1.noteBook());	break; //노트북 공격
 			
 			//플레이어 2
 			case KeyEvent.VK_UP:		player2.jumpingStart();		break; //점프
@@ -323,12 +326,27 @@ int t = 0;
 			case 47:					player2.throwMouse();		break; //마우스 던지기(/)
 			case 222:					player2.pullOther();		break; //다른 플레이어 내쪽으로 이동(따옴표. ')
 			case 46:					player2.bookskilStart();	break; //방어
-			case KeyEvent.VK_ENTER:		player1.hit(player2.noteBook(player1.getX()));	break; //노트북 공격
+			case KeyEvent.VK_ENTER:		player1.hit(player2.noteBook());	break; //노트북 공격
 			}
 		}
 		System.out.println("KeyPressed"); // 콘솔창에 메소드 이름 출력
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) { }
+	public void keyReleased(KeyEvent e) { 
+		if(!gameStop) {
+			switch (e.getKeyCode()) { //키 코드 알아내기
+
+
+			//플레이어1
+			case KeyEvent.VK_A:			player1.setLeft(false);		break;
+			case KeyEvent.VK_D:			player1.setRight(false);	break;
+
+			//플레이어 2
+			case KeyEvent.VK_LEFT:		player2.setLeft(false);		break; //왼쪽이동
+			case KeyEvent.VK_RIGHT:		player2.setRight(false);		break; //오른쪽이동
+			}
+		}
+		System.out.println("KeyReleased"); // 콘솔창에 메소드 이름 출력
+	}
 }

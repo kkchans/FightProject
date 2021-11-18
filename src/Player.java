@@ -15,6 +15,7 @@ public class Player {
 	private Player otherPlayer;
 	private boolean pullOther;
 	private int location; //왼쪽이면 -1, 1
+	private int attackRange = 300;
 	
 	private int hp;
 	
@@ -26,7 +27,7 @@ public class Player {
 		this.height = height;
 		this.x = x;
 		this.y = y;
-		speed = 30;
+		speed = 5;
 		this.location = location;
 	}
 	
@@ -65,17 +66,17 @@ public class Player {
 		if(!collisionCheck()) { //충돌 안했을때
 			if(y >= Main.MAIN_HEIGHT-height-100 && up && jumping)  {//점프
 				jumpEndSec = System.currentTimeMillis();
-				if(jumpEndSec - jumpStartSec >= 0.00005) //올라감
+				if(jumpEndSec - jumpStartSec >= 0.5) //올라감
 				{
-					yMove(-2);
+					yMove(-4);
 					jumpStartSec = System.currentTimeMillis();
 					if(y == Main.MAIN_HEIGHT-height-100) { up = false; down = true; }
 				}
 			}else if(y <= Main.MAIN_HEIGHT-height && down) { //낙하
 				jumpEndSec = System.currentTimeMillis();
-				if(jumpEndSec - jumpStartSec >= 0.00001) //내려옴
+				if(jumpEndSec - jumpStartSec >= 0.1) //내려옴
 				{
-					yMove(2);
+					yMove(4);
 					jumpStartSec = System.currentTimeMillis();
 					if(y == Main.MAIN_HEIGHT-height) { down = false; jumping = false;}
 				}
@@ -87,6 +88,9 @@ public class Player {
 	int getX() {
 		return (int)x;
 	}
+	void setX(float x) {
+		this.x = x;
+	}
 	
 	int getY() {
 		return (int)y;
@@ -95,14 +99,16 @@ public class Player {
 	boolean getJumping() {
 		return jumping;
 	}
-	
+
 	private boolean collisionCheck() {
     	int space = 30;
     	// 점프시 충돌은 아직. 좌우만..
     	//현재 플레이어가 왼쪽에 있을 때 충돌 여부 검사
+    	
     	if(x+space <= otherPlayer.x+space && x+width-space >= otherPlayer.x+space) { //충돌됨.
     		return true;
-    	}else if(x+space > otherPlayer.x+space && x+space <= otherPlayer.x+space+otherPlayer.width-space) { //충돌됨. (플러이어가 오른쪽일떄)
+    	}
+    	if(x+space <= otherPlayer.x+otherPlayer.width-space && x+width-space >= otherPlayer.x+otherPlayer.width-space) { //충돌됨. (플러이어가 오른쪽일떄)
     		return true;
     	}
  
@@ -120,16 +126,16 @@ public class Player {
 		}
 		if(left && !collisionCheck()) { //충돌 안했고 왼쪽으로 이동
 			xMove(-1);
-		}else if(left&& collisionCheck()) {
-			xMove(3);
+		}
+		if(left&& collisionCheck()) { //충돌
+			xMove(1);
 		}
 		if(right && !collisionCheck()) { //충돌 안했고 오른으로 이동
 			xMove(1);
-		}else if(right&& collisionCheck()) {
-			xMove(-3);
 		}
-		right = false;
-		left = false;
+		if(right&& collisionCheck()) {//충돌
+			xMove(-1);
+		}
 	}
 	
 	void jumpingStart() {
@@ -175,10 +181,10 @@ public class Player {
 		}
 	}
 	
-	int fist(int x) {
+	int fist() {
 		System.out.println("fist 함");
 		if(otherPlayer.book == true) return 0;
-		if(this.x + 200 > x && this.x - 200 < x) {
+		if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
 			System.out.println("맞음");
 			Sound.fistBgm();
 			return 5;
@@ -186,10 +192,10 @@ public class Player {
 		return 0;
 	}
 	
-	int noteBook(int x) {
+	int noteBook() {
 		System.out.println("noteBook 함");
 		if(otherPlayer.book == true) return 0;
-		if(this.x + 200 > x && this.x - 200 < x) {
+		if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
 			System.out.println("맞음");
 			Sound.fistBgm();
 			return 15;
@@ -224,7 +230,7 @@ public class Player {
 		//상대방 내쪽으로 끌어오는중
 		
 		if(pullOther && !collisionCheck()) { //끌어오는중이고 충돌 X
-			otherPlayer.xMove(location);
+			otherPlayer.xMove(location*2);//빠르게 오도록 함
 		}
 		if(pullOther && collisionCheck()) { //끌어오는중이고 충돌 
 			pullOther = false;
