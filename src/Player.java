@@ -1,3 +1,5 @@
+import java.awt.image.DataBufferInt;
+
 public class Player {
 	private float speed;
 	private int mouseSpeed = 15;
@@ -16,11 +18,33 @@ public class Player {
 	private boolean pullOther;
 	private int location; //왼쪽이면 -1, 1
 	private int attackRange = 300;
-	
+	private int[] playerAllPixels;
+	private int[] playerPixels;
 	private int hp;
+	playerType posture;
+	private enum playerType{
+		basic1,			//기본자세1
+		basic2,			//기본자세2
+		mouseReady,		//마우스 던질 준비
+		throwThing,		//물건 던지기(마우스, 충전기선)
+		chargerPull,	//충전기 당기기
+		fist,			//주먹질
+		notebookHit,	//노트북 공격
+		notebooHitRdy,	//노트북 공격 자세
+		run1,			//달리기1
+		run2,			//달리기2
+		beHit,			//맞는자세
+		jump,			//점프
+		chargerRdy,		//충전기 던질 준비
+		beWrapped,		//충전기 선에 감김
+		defense,		//방어
+		charger,		//충전기 선
+		mouse,			//마우스
+	}
 	
 	//생성될때
 	Player(float x, float y, int width, int height, int hp, int location){
+		posture = playerType.basic1;
 		jumping = false;
 		this.hp = hp;
 		this.width = width;
@@ -29,6 +53,16 @@ public class Player {
 		this.y = y;
 		speed = 5;
 		this.location = location;
+	}
+	
+	void setAllPixels(String src) throws Exception {
+		//플레이어의 전체 이미지를 불러와서 픽셀 데이터로 저장해둔다.
+		playerAllPixels = ((DataBufferInt) (ImageRelation.ImageLoad(src)).getRaster().getDataBuffer()).getData();
+	}
+	
+	void setPixels(int[] pixels) {
+		//플레이어의 이미지를 조작하기 위해 저장해둔다.
+		playerPixels = pixels;
 	}
 	
 	void setOtherPlayer(Player player) {
@@ -50,10 +84,15 @@ public class Player {
 		return height;
 	}
 	
-	
+	long movePreTime = System.currentTimeMillis();
 	//좌우 이동
 	void xMove(float playerX) {
 		this.x += playerX*speed;
+		if(System.currentTimeMillis() - movePreTime >= 100) { //0.3초마다
+			if(posture == playerType.run1) { posture = playerType.run2; }
+			else if(posture == playerType.run2) { posture = playerType.run1; }
+			movePreTime = System.currentTimeMillis();
+		}
 	}
 	
 	//상하 이동
@@ -78,7 +117,11 @@ public class Player {
 				{
 					yMove(4);
 					jumpStartSec = System.currentTimeMillis();
-					if(y == Main.MAIN_HEIGHT-height) { down = false; jumping = false;}
+					if(y == Main.MAIN_HEIGHT-height) {
+						//점프가 끝날때
+						down = false; jumping = false;
+						posture = playerType.basic1;
+					}
 				}
 			}
 		}
@@ -115,8 +158,13 @@ public class Player {
     	return false;
     }
 
+	long preTime = System.currentTimeMillis();
 	void update() {
-		
+		if(System.currentTimeMillis() - preTime >= 300) { //0.3초마다
+			if(posture == playerType.basic1) { posture = playerType.basic2; }
+			else if(posture == playerType.basic2) { posture = playerType.basic1; }
+			preTime = System.currentTimeMillis();
+		}
 		if(jumping) {
         	jump();
         }
@@ -136,9 +184,22 @@ public class Player {
 		if(right&& collisionCheck()) {//충돌
 			xMove(-1);
 		}
+		if(!left && !right && (posture == playerType.run1||posture == playerType.run2)) { posture = playerType.basic1; } //안움직이면 basic으로
+		if(!book && posture == playerType.defense) { posture = playerType.basic1;  }
+	}
+	
+	void render() {
+		
+		//플레이어 이미지
+		for(int i = 0; i < 310; i++) {
+    		for(int j = 0; j < 310; j++) {
+    			playerPixels[(width*j)+i] = playerAllPixels[(1860*(j+(height*(posture.ordinal()/6))))+(i+(width*(posture.ordinal()%6)))];
+    		}
+    	}
 	}
 	
 	void jumpingStart() {
+		posture = playerType.jump;
 		jumping = true;
 		up = true;
 		down = false;
@@ -150,12 +211,14 @@ public class Player {
 	}
 	public void setLeft(boolean left) {
 		this.left = left;
+		if(left) { 	posture = playerType.run1; }
 	}
 	public boolean isRight() {
 		return right;
 	}
 	public void setRight(boolean right) {
 		this.right = right;
+		if(right) { 	posture = playerType.run1; }
 	}
 	
 	public void setJumping(boolean jumping) {
@@ -169,6 +232,7 @@ public class Player {
 		return book;
 	}
 	void bookskilStart() {
+		posture = playerType.defense;
 		book = true;
 		bookStartSec = System.currentTimeMillis();
 		System.out.println("book 활성화");
@@ -176,6 +240,7 @@ public class Player {
 	void bookskil() {
 		bookEndSec = System.currentTimeMillis();
 		if((bookEndSec - bookStartSec)/1000 >= 1) { 
+			posture = playerType.basic1;
 			book = false;
 			System.out.println("book 끝남");
 		}
@@ -185,7 +250,9 @@ public class Player {
 		System.out.println("fist 함");
 		if(otherPlayer.book == true) return 0;
 		if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
+			posture = playerType.fist;
 			System.out.println("맞음");
+			otherPlayer.posture = playerType.beHit;
 			Sound.fistBgm();
 			return 5;
 		}
@@ -197,6 +264,7 @@ public class Player {
 		if(otherPlayer.book == true) return 0;
 		if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
 			System.out.println("맞음");
+			posture = playerType.notebookHit;
 			Sound.fistBgm();
 			return 15;
 		}

@@ -49,8 +49,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private BufferedImage image;
     private BufferedImage background_img;
     private int[] pixels;
-    private int[] player1_all_pixel;
-    private int[] player2_all_pixel;
     private int[] player1_pixel;
     private int[] player2_pixel;
    
@@ -59,8 +57,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     Player player2;
     int player1_width, player1_height;
     int player2_width, player2_height;
-    private BufferedImage player1_PImg;
-    private BufferedImage player2_PImg;
     private BufferedImage player1_hpImg;
     private BufferedImage player2_hpImg;
     private BufferedImage p1_mouse_img;
@@ -98,10 +94,10 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     		player2.setOtherPlayer(player1);
 			
     		//플레이어 전체 이미지 픽셀로 넣어놓기
-    		player1_PImg = ImageRelation.ImageLoad("./img/player1.png");
-    		player2_PImg = ImageRelation.ImageLoad("./img/player2.png");
-    		player1_all_pixel = ((DataBufferInt) player1_PImg.getRaster().getDataBuffer()).getData();
-    		player2_all_pixel = ((DataBufferInt) player2_PImg.getRaster().getDataBuffer()).getData();
+    		player1.setAllPixels("./img/player1.png");
+    		player2.setAllPixels("./img/player2.png");
+    		player1.setPixels(player1_pixel);
+    		player2.setPixels(player2_pixel);
     		
     		//플레이어 hp바 만들기
 		    player1_hpImg = new BufferedImage(hp_width, hp_height, BufferedImage.TYPE_INT_RGB);
@@ -229,11 +225,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 int t = 0;
     public void tick() {
     	
-    	for(int i = 0; i < 310; i++) {
-    		for(int j = 0; j < 310; j++) {
-    			player1_pixel[(player1_width*j)+i] = player1_all_pixel[(1860*j)+(i+620)];
-    		}
-    	}
 //        tickCount++;
 //    	 
 //    	 //노란배경
@@ -246,7 +237,9 @@ int t = 0;
     }
 
     public void render() {
-    	 BufferStrategy bs = getBufferStrategy(); //Canvas 클래스와 연계해서 더블 버퍼링을 구현
+    	player1.render();
+    	player2.render();
+    	BufferStrategy bs = getBufferStrategy(); //Canvas 클래스와 연계해서 더블 버퍼링을 구현
         if (bs == null) {
             createBufferStrategy(3);//BufferStrategy영역이 세개 생성됨.
             return;
