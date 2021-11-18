@@ -193,6 +193,7 @@ public class Player {
 		//플레이어 이미지
 		for(int i = 0; i < 310; i++) {
     		for(int j = 0; j < 310; j++) {
+    			//ordinal는 enum 값의 리스트 번호를 정수값으로 가져옴(0부터 시작)
     			playerPixels[(width*j)+i] = playerAllPixels[(1860*(j+(height*(posture.ordinal()/6))))+(i+(width*(posture.ordinal()%6)))];
     		}
     	}
