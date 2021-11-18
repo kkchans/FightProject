@@ -128,8 +128,6 @@ public class Player {
 		}else if(right&& collisionCheck()) {
 			xMove(-3);
 		}
-		right = false;
-		left = false;
 	}
 	
 	void jumpingStart() {
