@@ -48,9 +48,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private BufferedImage image;
     private BufferedImage background_img;
     private int[] pixels;
-    private int[] preMousePixels;
-    private int[] p1mousePixels;
-    private int[] p2mousePixels;
     private int[] playerP;
    
     //플레이어 관련
@@ -109,24 +106,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     	    
     	    image = ImageIO.read(new File("./img/flyMouse.png")); //이미지 로드
     		mouseW = image.getWidth();	mouseH = image.getHeight(); //이미지 넓이, 높이 저장
-
-    	    p1mousePixels = ((DataBufferInt) p1_mouse_img.getRaster().getDataBuffer()).getData();
-    	    p2mousePixels = ((DataBufferInt) p2_mouse_img.getRaster().getDataBuffer()).getData();
-    	   
-    	    //원래의 마우스 픽셀값들을 저장해놓는다.
-    	    preMousePixels = new int[p1mousePixels.length];
-    	    for(int i = 0; i < p1mousePixels.length; i++) {
-    	    	preMousePixels[i] = p1mousePixels[i];
-    	    }
-    	    //마우스 픽셀 플레이어한테 저장해두기
-    		player1.setMousePixels(p1mousePixels, preMousePixels);
-    		player2.setMousePixels(p2mousePixels, preMousePixels);
-			
-    		//마우스 첨엔 없음.
-            for (int i = 0; i < p1mousePixels.length; i++) {
-                p1mousePixels[i] =  0;
-                p2mousePixels[i] =  0;
-            }
     		
 		} catch (Exception e) {e.printStackTrace(); }
     	    
@@ -276,15 +255,17 @@ int t = 0;
         }
         g.fillRect(0, 0, getWidth(), getHeight());
       //플레이어 hp바 END
+        
+        //이미지들을 그려줌
         g.drawImage(background_img, 0, 0, getWidth(), getHeight(), null);
-        g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), mouseW, mouseH, null);
-        g.drawImage(p2_mouse_img, player2.getMouseX(), player2.getMouseY(), mouseW, mouseH, null);
+        //마우스 던지는중에만 마우스 그려줌
+        if(player1.getFlyMouse()) g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), mouseW, mouseH, null); 
+        if(player2.getFlyMouse()) g.drawImage(p2_mouse_img, player2.getMouseX(), player2.getMouseY(), mouseW, mouseH, null);
         g.drawImage(player1_img, player1.getX(), player1.getY(), player1_width, player1_height, null);
         g.drawImage(player2_img, player2.getX(), player2.getY(), player2_width, player2_height, null);
         g.drawImage(player1_hpImg, 30, 30, hp_width, hp_height, null);
         g.drawImage(player2_hpImg, Main.MAIN_WIDTH-hp_width-30, 30, hp_width, hp_height, null);
  
-        
         g.dispose();
         bs.show();
     }

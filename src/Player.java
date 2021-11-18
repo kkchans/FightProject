@@ -10,10 +10,9 @@ public class Player {
 	private boolean jumping;
 	private boolean up, down, left, right;
 	private boolean book;
-	private boolean flyMouse;
+	boolean flyMouse;
 	private int mouseX=0, mouseY=400;//마우스 좌표
 	private Player otherPlayer;
-	private int[] mousePixels, preMousePixels;
 	private boolean pullOther;
 	private int location; //왼쪽이면 -1, 1
 	
@@ -49,13 +48,8 @@ public class Player {
 	public int getHeight() {
 		return height;
 	}
-	void setMousePixels(int[] pixels, int[] prePixels) {
-		this.mousePixels = pixels;
-		this.preMousePixels = prePixels;
-	}
 	
 	
-
 	//좌우 이동
 	void xMove(float playerX) {
 		this.x += playerX*speed;
@@ -244,15 +238,15 @@ public class Player {
 		
 	}
 	
+	boolean getFlyMouse() {
+		return flyMouse;
+	}
+	
 	void throwMouse() {
 		//마우스 던지기 시작
 		flyMouse = true;
 		//마우스 위치 세팅
         mouseX = (int)x;
-		//마우스 보이게 함
-		for (int i = 0; i < mousePixels.length; i++) {
-            mousePixels[i] = preMousePixels[i];
-        }
 	}
 	
 	public void flyMouse() {
@@ -261,10 +255,6 @@ public class Player {
 			if(mouseCollisionChk()) { //상대방한테 마우스 닿았을때
 				//충돌
 				flyMouse = false;
-				//마우스 없애기.
-		        for (int i = 0; i < mousePixels.length; i++) {
-		            mousePixels[i] =  0;
-		        }
 				//상대방 피 깎기
 				otherPlayer.hit(100);
 			}
