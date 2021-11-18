@@ -35,8 +35,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     
     private JFrame frame;
 
-
-
     public boolean running = false;
     boolean gameStop = false;
     public int tickCount = 0;
@@ -48,13 +46,18 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private BufferedImage image;
     private BufferedImage background_img;
     private int[] pixels;
-    private int[] playerP;
+    private int[] player1_all_pixel;
+    private int[] player2_all_pixel;
+    private int[] player1_pixel;
+    private int[] player2_pixel;
    
     //플레이어 관련
     Player player1;
     Player player2;
     int player1_width, player1_height;
     int player2_width, player2_height;
+    private BufferedImage player1_PImg;
+    private BufferedImage player2_PImg;
     private BufferedImage player1_hpImg;
     private BufferedImage player2_hpImg;
     private BufferedImage p1_mouse_img;
@@ -74,8 +77,9 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     		
     		//플레이어들 이미지 로드 & 크기 설정//player이미지 로드, 생성
     		player1_img = ImageRelation.ImageLoad("./img/playerTest.png");
-    		playerP = ((DataBufferInt) player1_img.getRaster().getDataBuffer()).getData();
     		player2_img = ImageRelation.ImageLoad("./img/playerTest.png");
+    		player1_pixel = ((DataBufferInt) player1_img.getRaster().getDataBuffer()).getData();
+    		player2_pixel = ((DataBufferInt) player2_img.getRaster().getDataBuffer()).getData();
     		
     		//이미지 만들어지면 삭제될예정
     		image = ImageIO.read( new File("./img/playerTest.png"));
@@ -90,6 +94,12 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     		player1.setOtherPlayer(player2);
     		player2.setOtherPlayer(player1);
 			
+    		//플레이어 전체 이미지 픽셀로 넣어놓기
+    		player1_PImg = ImageRelation.ImageLoad("./img/player1.png");
+    		player2_PImg = ImageRelation.ImageLoad("./img/player2.png");
+    		player1_all_pixel = ((DataBufferInt) player1_PImg.getRaster().getDataBuffer()).getData();
+    		player2_all_pixel = ((DataBufferInt) player2_PImg.getRaster().getDataBuffer()).getData();
+    		
     		//플레이어 hp바 만들기
 		    player1_hpImg = new BufferedImage(hp_width, hp_height, BufferedImage.TYPE_INT_RGB);
 		    player2_hpImg = new BufferedImage(hp_width, hp_height, BufferedImage.TYPE_INT_RGB);
@@ -206,7 +216,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 	            if (System.currentTimeMillis() - lastTimer >= 100) {
 	                lastTimer += 100;
 	                System.out.println(ticks + " ticks, " + frames + " frames");
-	                frames = 0;
+	                 frames = 0;
 	                ticks = 0;
 	            }
             }
@@ -215,12 +225,18 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 
 int t = 0;
     public void tick() {
-        //tickCount++;
-    	 
-    	 //노란배경
+    	
+    	for(int i = 0; i < 310; i++) {
+    		for(int j = 0; j < 310; j++) {
+    			player1_pixel[(player1_width*j)+i] = player1_all_pixel[(1860*j)+(i+620)];
+    		}
+    	}
+//        tickCount++;
+//    	 
+//    	 //노란배경
 //    	if(t<=200) {
 //	        for (int i = 0; i < pixels.length; i++) {
-//	            pixels[i] = pixels[i]-1;
+//	            pixels[i] = pixels[i]-tickCount;
 //	        }
 //	    }
 //    	t++;
