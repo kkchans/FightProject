@@ -55,8 +55,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     //플레이어 관련
     Player player1;
     Player player2;
-    int player1_width, player1_height;
-    int player2_width, player2_height;
     private BufferedImage player1_hpImg;
     private BufferedImage player2_hpImg;
     private BufferedImage p1_mouse_img;
@@ -64,7 +62,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private int hp_width = 500;
     private int hp_height = 50;
 	int imgWidth, imgHeight;  
-	int mouseW, mouseH; //마우스의 크기  
+
     public test3() {
     	image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
     	Sound sound = new Sound(); //생성해야 음악 틀 수 있음
@@ -76,23 +74,17 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     		
     		//플레이어들 이미지 로드 & 크기 설정//player이미지 로드, 생성
     		player1_img = ImageRelation.ImageLoad("./img/playerTest.png");
-    		player2_img = ImageRelation.ImageLoad("./img/playerTest.png");
-    		player1_pixel = ((DataBufferInt) player1_img.getRaster().getDataBuffer()).getData();
-    		player2_pixel = ((DataBufferInt) player2_img.getRaster().getDataBuffer()).getData();
+    		imgWidth = player1_img.getWidth(); imgHeight = player1_img.getHeight();
+    		player1 = new Player(0, Main.MAIN_HEIGHT-imgHeight, imgWidth, imgHeight, hp_width, -1);
     		
-    		//이미지 만들어지면 삭제될예정
-    		image = ImageIO.read( new File("./img/playerTest.png"));
-    		player1_width = image.getWidth();
-    		player1_height = image.getHeight();
-			image = ImageIO.read( new File("./img/playerTest.png"));
-    		player2_width = image.getWidth();
-    		player2_height = image.getHeight();
-			
-			player1 = new Player(0, Main.MAIN_HEIGHT-player1_height, player1_width, player1_height, hp_width, -1);
-			player2 = new Player(Main.MAIN_WIDTH-player2_width, Main.MAIN_HEIGHT-player2_height, player2_width, player2_height, hp_width, 1);
+    		player2_img = ImageRelation.ImageLoad("./img/playerTest.png");
+    		imgWidth = player2_img.getWidth(); imgHeight = player2_img.getHeight();
+    		player2 = new Player(Main.MAIN_WIDTH-imgWidth, Main.MAIN_HEIGHT-imgHeight, imgWidth, imgHeight, hp_width, 1);
+    		
     		player1.setOtherPlayer(player2);
     		player2.setOtherPlayer(player1);
-			
+    		player1_pixel = ((DataBufferInt) player1_img.getRaster().getDataBuffer()).getData();
+    		player2_pixel = ((DataBufferInt) player2_img.getRaster().getDataBuffer()).getData();
     		//플레이어 전체 이미지 픽셀로 넣어놓기
     		player1.setAllPixels("./img/player1.png");
     		player2.setAllPixels("./img/player2.png");
@@ -114,7 +106,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     	    p2_mouse_img = ImageRelation.ImageLoad("./img/flyMouse.png");
     	    
     	    image = ImageIO.read(new File("./img/flyMouse.png")); //이미지 로드
-    		mouseW = image.getWidth();	mouseH = image.getHeight(); //이미지 넓이, 높이 저장
     		
 		} catch (Exception e) {e.printStackTrace(); }
     	    
@@ -271,12 +262,12 @@ int t = 0;
         //이미지들을 그려줌
         g.drawImage(background_img, 0, 0, getWidth(), getHeight(), null);
         //마우스 던지는중에만 마우스 그려줌
-        if(player1.getFlyMouse()) g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), mouseW, mouseH, null); 
-        if(player2.getFlyMouse()) g.drawImage(p2_mouse_img, player2.getMouseX(), player2.getMouseY(), mouseW, mouseH, null);
-        g.drawImage(player1_img, player1.getX(), player1.getY(), player1_width, player1_height, null);
-        g.drawImage(player2_img, player2.getX(), player2.getY(), player2_width, player2_height, null);
+        if(player1.getFlyMouse()) g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), null);  //마우스 전체 이미지 그리기
+        if(player2.getFlyMouse()) g.drawImage(p2_mouse_img, player2.getMouseX(), player2.getMouseY(), null);
+        g.drawImage(player1_img, player1.getX(), player1.getY(), null);
+        g.drawImage(player2_img, player2.getX(), player2.getY(), null);
         g.drawImage(player1_hpImg, 30, 30, hp_width, hp_height, null);
-        g.drawImage(player2_hpImg, Main.MAIN_WIDTH-hp_width-30, 30, hp_width, hp_height, null);
+        g.drawImage(player2_hpImg, Main.MAIN_WIDTH-hp_width-30, 30, null);
  
         g.dispose();
         bs.show();

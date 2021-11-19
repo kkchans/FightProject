@@ -144,7 +144,7 @@ public class Player {
 	}
 
 	private boolean collisionCheck() {
-    	int space = 30;
+    	int space = 80;
     	// 점프시 충돌은 아직. 좌우만..
     	//현재 플레이어가 왼쪽에 있을 때 충돌 여부 검사
     	
@@ -282,7 +282,7 @@ public class Player {
 	}
 
 	private boolean mouseCollisionChk() {
-    	int space = 30;
+    	int space = 50;
     	// 마우스랑 상대방 닿았는지
     	if(mouseX <= otherPlayer.x+space && mouseX+width >= otherPlayer.x+space) { //충돌됨.
     		Sound.fistBgm();
