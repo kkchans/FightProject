@@ -21,8 +21,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-
-
 public class test3 extends Canvas implements Runnable, KeyListener {
 
 	//test
@@ -48,6 +46,8 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     private BufferedImage player2_img;
     private BufferedImage image;
     private BufferedImage background_img;
+    private BufferedImage p1FistSkill_img, p1NotebookSkill_img, p1MouseSkill_img, p1ChargerSkill_img, p1DefenseSkill_img;
+    private BufferedImage p2FistSkill_img, p2NotebookSkill_img, p2MouseSkill_img, p2ChargerSkill_img, p2DefenseSkill_img;
     private int[] pixels;
     private int[] player1_pixel;
     private int[] player2_pixel;
@@ -65,8 +65,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 
     public test3() {
     	image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-    	Sound sound = new Sound(); //생성해야 음악 틀 수 있음
-    	Sound.Play("./bgm/background_bgm.wav"); //배경 음악
+    	//Sound.Play("./bgm/background_bgm.wav"); //배경 음악
 		try {
 			//background이미지 로드
     		background_img = ImageRelation.ImageLoad("./img/stage1.jpg");
@@ -85,6 +84,19 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     		player2.setOtherPlayer(player1);
     		player1_pixel = ((DataBufferInt) player1_img.getRaster().getDataBuffer()).getData();
     		player2_pixel = ((DataBufferInt) player2_img.getRaster().getDataBuffer()).getData();
+    		
+    		p1FistSkill_img = ImageRelation.ImageLoad("./img./skill_fist.png");
+    		p1MouseSkill_img =  ImageRelation.ImageLoad("./img./skill_p1_mouse.png");
+    		p1DefenseSkill_img =  ImageRelation.ImageLoad("./img./skill_p1_defense.png");
+    		p1ChargerSkill_img  = ImageRelation.ImageLoad("./img./skill_p1_charger.png");
+    		p1NotebookSkill_img = ImageRelation.ImageLoad("./img./skill_p1_notebook.png");
+    		
+    		p2FistSkill_img = ImageRelation.ImageLoad("./img./skill_fist.png");
+    		p2MouseSkill_img =  ImageRelation.ImageLoad("./img./skill_p2_mouse.png");
+    		p2DefenseSkill_img =  ImageRelation.ImageLoad("./img./skill_p2_defense.png");
+    		p2ChargerSkill_img  = ImageRelation.ImageLoad("./img./skill_p2_charger.png");
+    		p2NotebookSkill_img = ImageRelation.ImageLoad("./img./skill_p2_notebook.png");
+    		
     		//플레이어 전체 이미지 픽셀로 넣어놓기
     		player1.setAllPixels("./img/player1.png");
     		player2.setAllPixels("./img/player2.png");
@@ -260,6 +272,7 @@ int t = 0;
       //플레이어 hp바 END
         
         //이미지들을 그려줌
+
         g.drawImage(background_img, 0, 0, getWidth(), getHeight(), null);
         //마우스 던지는중에만 마우스 그려줌
         if(player1.getFlyMouse()) g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), null);  //마우스 전체 이미지 그리기
@@ -268,7 +281,23 @@ int t = 0;
         g.drawImage(player2_img, player2.getX(), player2.getY(), null);
         g.drawImage(player1_hpImg, 30, 30, hp_width, hp_height, null);
         g.drawImage(player2_hpImg, Main.MAIN_WIDTH-hp_width-30, 30, null);
- 
+
+        //스킬들 그려주는 부분;;
+        int p1startLoc = 30, interver = 60, y_loc = 90;
+        if(player1.isSkill_fistActivate()) g.drawImage(p1FistSkill_img, p1startLoc, y_loc, 50, 50, null);
+        if(player1.isSkill_chargerActivate()) g.drawImage(p1ChargerSkill_img, p1startLoc+interver*1, y_loc, 50, 50, null);
+        if(player1.isSkill_mouseActivate())  g.drawImage(p1MouseSkill_img, p1startLoc+interver*2, y_loc, 50, 50, null);
+        if(player1.isSkill_defenseActivate()) g.drawImage(p1DefenseSkill_img, p1startLoc+interver*3, y_loc, 50, 50, null);
+        if(player1.isSkill_notebookActivate()) g.drawImage(p1NotebookSkill_img, p1startLoc+interver*4, y_loc, 50, 50, null);
+        int p2startLoc = Main.MAIN_WIDTH-80;
+        if(player2.isSkill_fistActivate()) g.drawImage(p2FistSkill_img, p2startLoc, y_loc, 50, 50, null);
+        if(player2.isSkill_chargerActivate())g.drawImage(p2ChargerSkill_img, p2startLoc-interver*1, y_loc, 50, 50, null);
+        if(player2.isSkill_mouseActivate())g.drawImage(p2MouseSkill_img, p2startLoc-interver*2, y_loc, 50, 50, null);
+        if(player2.isSkill_defenseActivate())g.drawImage(p2DefenseSkill_img, p2startLoc-interver*3, y_loc, 50, 50, null);
+        if(player2.isSkill_notebookActivate())g.drawImage(p2NotebookSkill_img, p2startLoc-interver*4, y_loc, 50, 50, null);
+
+        
+        
         g.dispose();
         bs.show();
     }

@@ -20,6 +20,8 @@ public class Player {
 	private int attackRange = 300;
 	private int[] playerAllPixels;
 	private int[] playerPixels;
+	private boolean skill_fistActivate = true, skill_mouseActivate =true, skill_notebookActivate = true,
+			skill_defenseActivate = true, skill_chargerActivate = true;
 	private int hp;
 	playerType posture;
 	private enum playerType{
@@ -59,7 +61,7 @@ public class Player {
 		//플레이어의 전체 이미지를 불러와서 픽셀 데이터로 저장해둔다.
 		playerAllPixels = ((DataBufferInt) (ImageRelation.ImageLoad(src)).getRaster().getDataBuffer()).getData();
 	}
-	
+
 	void setPixels(int[] pixels) {
 		//플레이어의 이미지를 조작하기 위해 저장해둔다.
 		playerPixels = pixels;
@@ -186,6 +188,7 @@ public class Player {
 		}
 		if(!left && !right && (posture == playerType.run1||posture == playerType.run2)) { posture = playerType.basic1; } //안움직이면 basic으로
 		if(!book && posture == playerType.defense) { posture = playerType.basic1;  }
+		
 	}
 	
 	void render() {
@@ -250,6 +253,7 @@ public class Player {
 	int fist() {
 		System.out.println("fist 함");
 		if(otherPlayer.book == true) return 0;
+
 		if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
 			posture = playerType.fist;
 			System.out.println("맞음");
@@ -338,5 +342,27 @@ public class Player {
 			}
 		}
 	}
+
+	public boolean isSkill_fistActivate() {
+		return skill_fistActivate;
+	}
+
+	public boolean isSkill_mouseActivate() {
+		return skill_mouseActivate;
+	}
+
+	public boolean isSkill_notebookActivate() {
+		return skill_notebookActivate;
+	}
+
+	public boolean isSkill_defenseActivate() {
+		return skill_defenseActivate;
+	}
+
+	public boolean isSkill_chargerActivate() {
+		return skill_chargerActivate;
+	}
+	
+	
 	
 }
