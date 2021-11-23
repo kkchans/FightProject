@@ -20,6 +20,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 
@@ -37,12 +39,16 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     //움직임 key는 배열? hash? 에 넣어놓고 저장해놨다가 실행시키면 됨.
     
     private JFrame frame;
+    
 
     public boolean running = false;
     boolean gameStop = false;
     public int tickCount = 0;
 
     JButton goMainScreen; //뒤로가기 버튼
+    
+    JLabel label1; // 타이머
+    int addtime = 0; // 추가 시간 
 
     private BufferedImage player1_img;
     private BufferedImage player2_img;
@@ -69,6 +75,8 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     	image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
     	Sound sound = new Sound(); //생성해야 음악 틀 수 있음
     	Sound.Play("./bgm/background_bgm.wav"); //배경 음악
+    	
+    	
 		try {
 			//background이미지 로드
     		background_img = ImageRelation.ImageLoad("./img/stage1.jpg");
@@ -125,6 +133,12 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 
         frame = new JFrame(NAME);
 
+        label1 = new JLabel("" + 60); 
+        label1.setBounds(Main.MAIN_WIDTH-650, 40, 15, 30);
+        label1.setVisible(true);
+        frame.add(label1);
+        
+        
         goMainScreen = new JButton("←");
 		goMainScreen.setBounds(Main.MAIN_WIDTH-63, 0, 50, 30); //이거 하려면 setLayout(null); 해줘야함 
 		goMainScreen.addActionListener(new ActionListener(){
@@ -179,11 +193,35 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         long lastTimer = System.currentTimeMillis();
         double delta = 0;
 
+        long beforeTime = System.currentTimeMillis();
+        long count = 60;
+        
+        
         while (running) {
+        	
+        	if(player1.getHp() <= 0) {
+        		stop();
+        	}
+        	else if(player2.getHp() <= 0) {
+        		stop();
+        	}
             now = System.nanoTime();
             delta += (now - lastTime) / nsPerTick;
             lastTime = now;
             shouldRender = true;
+            
+            // 제한 시간
+            long afterTime = System.currentTimeMillis(); 
+            count = ((beforeTime+60000) - afterTime)/1000+addtime;
+            if(count == 0) { // 시간 끝나면 체력이 똑같냐에 따라 추가 시간을 줌 
+            	if(player1.getHp()==player2.getHp()) {
+            		addtime+=20;
+            	}
+            	else stop();
+            }
+            //System.out.println("시간차이(m) : "+secDiffTime);
+            label1.setText(count + "");
+            
             if (delta >= 0.00001) {
                 ticks++;
                 tick();

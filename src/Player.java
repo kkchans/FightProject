@@ -9,6 +9,11 @@ public class Player {
 	private long jumpEndSec;
 	private long bookStartSec;
 	private long bookEndSec;
+	private long throwMouse_cooltime;
+	private long book_cooltime;
+	private long fist_cooltime;
+	private long pullOther_cooltime;
+	private long noteBook_cooltime;
 	private boolean jumping;
 	private boolean up, down, left, right;
 	private boolean book;
@@ -82,6 +87,12 @@ public class Player {
 
 	public int getHeight() {
 		return height;
+	}
+	
+	boolean Cooltime(long time, float cool) {
+		long curtime = System.currentTimeMillis();
+		if((curtime-time)/1000 > cool ) return true;
+		else return false;
 	}
 	
 	long movePreTime = System.currentTimeMillis();
@@ -318,6 +329,8 @@ public class Player {
 	}
 	
 	void throwMouse() {
+		
+		Cooltime(throwMouse_cooltime, 5);
 		//마우스 던지기 시작
 		flyMouse = true;
 		//마우스 위치 세팅
@@ -326,6 +339,8 @@ public class Player {
 	
 	public void flyMouse() {
 		//마우스 던지는중
+		
+		
 		if(flyMouse) {
 			if(mouseCollisionChk()) { //상대방한테 마우스 닿았을때
 				//충돌
