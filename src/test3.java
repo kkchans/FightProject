@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 
 public class test3 extends Canvas implements Runnable, KeyListener {
@@ -32,7 +33,6 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 	static final int VK_LSHIFT  = 0xA0;
     boolean gameStart = true;
 
-
     //움직임 key는 배열? hash? 에 넣어놓고 저장해놨다가 실행시키면 됨.
     
     private JFrame frame;
@@ -43,6 +43,9 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 
     JButton goMainScreen; //뒤로가기 버튼
 
+    JLabel label1; // 타이머
+    int addtime = 0; // 추가 시간 
+    
     private BufferedImage player1_img;
     private BufferedImage player2_img;
     private BufferedImage image;
@@ -129,6 +132,14 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 
         frame = new JFrame(NAME);
 
+        //타이머 
+        label1 = new JLabel("" + 60); 
+        label1.setBounds(Main.MAIN_WIDTH-650, 40, 15, 30);
+        label1.setVisible(true);
+        label1.setFocusable(true);
+        frame.add(label1);
+
+        
         goMainScreen = new JButton("←");
 		goMainScreen.setBounds(Main.MAIN_WIDTH-63, 0, 50, 30); //이거 하려면 setLayout(null); 해줘야함 
 		goMainScreen.addActionListener(new ActionListener(){
@@ -137,6 +148,12 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 	        		if(running) { stop(); } //게임을 멈춤.
 	        		frame.dispose(); //프레임 없애기(?)
 	        		new MainTest();
+	        		/*
+	        		 * 게임 함
+	        		 * if(running) { stop(); } //게임을 멈춤.
+	        		frame.dispose(); //프레임 없애기(?)
+	        		new test3().start();
+	        		 * */
 	        }});
 		goMainScreen.setVisible(true);
 		frame.add(goMainScreen);
@@ -167,7 +184,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
     	//게임을 멈추거나 나갈때 실행되는..
         running = false; //
         gameStop = false; //게임 멈추기
-        Sound.PlayStop(); //음악 종료
+        //Sound.PlayStop(); //음악 종료
     }
 
 
@@ -183,11 +200,33 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         long lastTimer = System.currentTimeMillis();
         double delta = 0;
 
+        long beforeTime = System.currentTimeMillis();
+        long count = 60;
+        
         while (running) {
-            now = System.nanoTime();
-            delta += (now - lastTime) / nsPerTick;
-            lastTime = now;
-            shouldRender = true;
+        	 if(player1.getHp() <= 0) {
+                 stop();
+              }
+              else if(player2.getHp() <= 0) {
+                 stop();
+              }
+               now = System.nanoTime();
+               delta += (now - lastTime) / nsPerTick;
+               lastTime = now;
+               shouldRender = true;
+               
+               // 제한 시간
+               long afterTime = System.currentTimeMillis(); 
+               count = ((beforeTime+60000) - afterTime)/1000+addtime;
+               if(count == 0) { // 시간 끝나면 체력이 똑같냐에 따라 추가 시간을 줌 
+                  if(player1.getHp()==player2.getHp()) {
+                     addtime+=20;
+                  }
+                  else stop();
+               }
+               //System.out.println("시간차이(m) : "+secDiffTime);
+               label1.setText(count + "");
+               
             if (delta >= 0.00001) {
                 ticks++;
                 tick();
@@ -350,8 +389,6 @@ int t = 0;
 	public void keyReleased(KeyEvent e) { 
 		if(!gameStop) {
 			switch (e.getKeyCode()) { //키 코드 알아내기
-
-
 			//플레이어1
 			case KeyEvent.VK_A:			player1.setLeft(false);		break;
 			case KeyEvent.VK_D:			player1.setRight(false);	break;
