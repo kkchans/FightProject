@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -45,6 +47,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 
     JLabel label1; // 타이머
     int addtime = 0; // 추가 시간 
+    private ImagePanel timerPanel;
     
     private BufferedImage player1_img;
     private BufferedImage player2_img;
@@ -74,6 +77,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 			//background이미지 로드
     		background_img = ImageRelation.ImageLoad("./img/stage1.jpg");
     		pixels = ((DataBufferInt) background_img.getRaster().getDataBuffer()).getData();
+    		timerPanel = new ImagePanel(new ImageIcon("./img/timer.png").getImage(), 160, 80);
     		
     		//플레이어들 이미지 로드 & 크기 설정//player이미지 로드, 생성
     		player1_img = ImageRelation.ImageLoad("./img/playerTest.png");
@@ -134,10 +138,14 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 
         //타이머 
         label1 = new JLabel("" + 60); 
-        label1.setBounds(Main.MAIN_WIDTH-650, 40, 15, 30);
-        label1.setVisible(true);
-        label1.setFocusable(true);
+        timerPanel.setBounds((Main.MAIN_WIDTH/2)-(160 /2), 30, 160, 80);
+        timerPanel.add(label1);
+        label1.setBounds((Main.MAIN_WIDTH/2)-(160 /2), 30, 160, 80);
+        label1.setFont(new Font("Helvetica", Font.BOLD, 25));
+        label1.setHorizontalAlignment(JLabel.CENTER); //수평정렬
+        label1.setVerticalAlignment(JLabel.CENTER); //수직정렬
         frame.add(label1);
+        
 
         
         goMainScreen = new JButton("←");
@@ -157,12 +165,11 @@ public class test3 extends Canvas implements Runnable, KeyListener {
 	        }});
 		goMainScreen.setVisible(true);
 		frame.add(goMainScreen);
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(Main.MAIN_WIDTH, Main.MAIN_HEIGHT); // 프레임 크기 설정
         frame.addKeyListener(this);
         frame.setFocusable(true);
-
+        this.setFocusable(false); //캔버스에 focuse가 되지 않도록
         frame.add(this);
         frame.pack();
 
@@ -226,7 +233,7 @@ public class test3 extends Canvas implements Runnable, KeyListener {
                }
                //System.out.println("시간차이(m) : "+secDiffTime);
                label1.setText(count + "");
-               
+//               timerPanel.repaint();
             if (delta >= 0.00001) {
                 ticks++;
                 tick();
@@ -244,11 +251,11 @@ public class test3 extends Canvas implements Runnable, KeyListener {
                 if(player2.getJumping()) {
                 	player2.jump();
                 }
-                if(player1.getBook()) {
-                	player1.bookskil();
+                if(player1.defenseSkill.activate) {
+                	player1.defenseSkill();
                 }
-                if(player2.getBook()) {
-                	player2.bookskil();
+                if(player2.defenseSkill.activate) {
+                	player2.defenseSkill();
                 }
                 render();
             }
@@ -327,13 +334,13 @@ int t = 0;
         if(player1.isSkill_fistActivate()) g.drawImage(p1FistSkill_img, p1startLoc, y_loc, 50, 50, null);
         if(player1.isSkill_chargerActivate()) g.drawImage(p1ChargerSkill_img, p1startLoc+interver*1, y_loc, 50, 50, null);
         if(player1.isSkill_mouseActivate())  g.drawImage(p1MouseSkill_img, p1startLoc+interver*2, y_loc, 50, 50, null);
-        if(player1.isSkill_defenseActivate()) g.drawImage(p1DefenseSkill_img, p1startLoc+interver*3, y_loc, 50, 50, null);
+        if(player1.defenseSkill.Cooltime()) g.drawImage(p1DefenseSkill_img, p1startLoc+interver*3, y_loc, 50, 50, null);
         if(player1.isSkill_notebookActivate()) g.drawImage(p1NotebookSkill_img, p1startLoc+interver*4, y_loc, 50, 50, null);
         int p2startLoc = Main.MAIN_WIDTH-80;
         if(player2.isSkill_fistActivate()) g.drawImage(p2FistSkill_img, p2startLoc, y_loc, 50, 50, null);
         if(player2.isSkill_chargerActivate())g.drawImage(p2ChargerSkill_img, p2startLoc-interver*1, y_loc, 50, 50, null);
         if(player2.isSkill_mouseActivate())g.drawImage(p2MouseSkill_img, p2startLoc-interver*2, y_loc, 50, 50, null);
-        if(player2.isSkill_defenseActivate())g.drawImage(p2DefenseSkill_img, p2startLoc-interver*3, y_loc, 50, 50, null);
+        if(player2.defenseSkill.Cooltime())g.drawImage(p2DefenseSkill_img, p2startLoc-interver*3, y_loc, 50, 50, null);
         if(player2.isSkill_notebookActivate())g.drawImage(p2NotebookSkill_img, p2startLoc-interver*4, y_loc, 50, 50, null);
 
         
@@ -341,8 +348,6 @@ int t = 0;
         g.dispose();
         bs.show();
     }
-
-
 
     //keylistener 구현
 	@Override
@@ -369,7 +374,7 @@ int t = 0;
 			case KeyEvent.VK_D:			player1.setRight(true);		break;
 			case KeyEvent.VK_E:			player1.throwMouse();		break; //마우스 던지기
 			case KeyEvent.VK_R:			player1.pullOther();		break; //다른 플레이어 내쪽으로 이동
-			case KeyEvent.VK_F:			player1.bookskilStart();	break; //방어
+			case KeyEvent.VK_F:			player1.DefenseSkillStart();	break; //방어
 			case KeyEvent.VK_Q:			player2.hit(player1.noteBook());	break; //노트북 공격
 			
 			//플레이어 2
@@ -378,7 +383,7 @@ int t = 0;
 			case KeyEvent.VK_RIGHT:		player2.setRight(true);		break; //오른쪽이동
 			case 47:					player2.throwMouse();		break; //마우스 던지기(/)
 			case 222:					player2.pullOther();		break; //다른 플레이어 내쪽으로 이동(따옴표. ')
-			case 46:					player2.bookskilStart();	break; //방어
+			case 46:					player2.DefenseSkillStart();	break; //방어
 			case KeyEvent.VK_ENTER:		player1.hit(player2.noteBook());	break; //노트북 공격
 			}
 		}
