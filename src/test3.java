@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.desktop.ScreenSleepEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -176,10 +177,9 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
     }
-
-
-
+    
     public synchronized void start() {
         running = true;
         new Thread(this).start();
@@ -211,26 +211,12 @@ public class test3 extends Canvas implements Runnable, KeyListener {
         long count = 60;
         
         while (running) {
-        	 if(player1.getHp() <= 0) {
-                 stop();
-              }
-              else if(player2.getHp() <= 0) {
-                 stop();
-              }
                now = System.nanoTime();
                delta += (now - lastTime) / nsPerTick;
                lastTime = now;
                shouldRender = true;
                
-               // 제한 시간
-               long afterTime = System.currentTimeMillis(); 
-               count = ((beforeTime+60000) - afterTime)/1000+addtime;
-               if(count == 0) { // 시간 끝나면 체력이 똑같냐에 따라 추가 시간을 줌 
-                  if(player1.getHp()==player2.getHp()) {
-                     addtime+=20;
-                  }
-                  else stop();
-               }
+               
                //System.out.println("시간차이(m) : "+secDiffTime);
                label1.setText(count + "");
 //               timerPanel.repaint();
@@ -252,24 +238,55 @@ public class test3 extends Canvas implements Runnable, KeyListener {
                 	player2.jump();
                 }
                 if(player1.defenseSkill.activate) {
-                	player1.defenseSkill();
+                	player1.defenseSkillProcess();
                 }
                 if(player2.defenseSkill.activate) {
-                	player2.defenseSkill();
+                	player2.defenseSkillProcess();
                 }
                 render();
             }
-
+           
 
             if(!gameStop) { //게임을 멈추지 않았을 때(게임을 멈추면 하지 말아야 할 것들)
 	            if (System.currentTimeMillis() - lastTimer >= 100) {
 	                lastTimer += 100;
 	                System.out.println(ticks + " ticks, " + frames + " frames");
-	                 frames = 0;
+	                frames = 0;
 	                ticks = 0;
 	            }
             }
+            
+            if(player1.getHp() <= 0) {
+            	System.out.println("============================================"+player1.getHp());
+            	for (int x=0; x<hp_width; x++) {
+                	for(int y = 0; y < hp_height; y++) {
+                		player1_hpImg.setRGB(x, y, 167); //167은 파란색 hp바 배경
+                	}
+        	    }
+                stop();
+             }
+            else if(player2.getHp() <= 0) {
+            	System.out.println(hp_width);
+            	for (int x=0; x<hp_width; x++) {
+                	for(int y = 0; y < hp_height; y++) {
+                		player2_hpImg.setRGB(x, y, 167); //167은 파란색 hp바 배경
+                	}
+        	    }
+                stop();
+            }
+            
+            // 제한 시간
+            long afterTime = System.currentTimeMillis(); 
+            count = ((beforeTime+60000) - afterTime)/1000+addtime;
+            if(count == 0) { // 시간 끝나면 체력이 똑같냐에 따라 추가 시간을 줌 
+               if(player1.getHp()==player2.getHp()) {
+                  addtime+=20;
+               }
+               else { stop(); }
+            }
+            
         }
+       
     }
 
 int t = 0;
@@ -301,20 +318,19 @@ int t = 0;
         g.fillRect(0, 0, getWidth(), getHeight());
         
         //플레이어 hp바
-        if(player1.getHp()>=0) {
-	        for (int x=player1.getHp(); x<hp_width; x++) {
-	        	for(int y = 0; y < hp_height; y++) {
-	        		player1_hpImg.setRGB(x, y, 167);
-	        	}
-		    }
-        }
-        if(player2.getHp()>=0) {
-	        for (int x=player2.getHp(); x<hp_width; x++) {
-	        	for(int y = 0; y < hp_height; y++) {
-	        		player2_hpImg.setRGB(x, y, 167); //167은 파란색 hp바 배경
-	        	}
-		    }
-        }
+
+        for (int x=player1.getHp(); x<hp_width; x++) {
+        	for(int y = 0; y < hp_height; y++) {
+        		player1_hpImg.setRGB(x, y, 167);
+        	}
+	    }
+   
+        for (int x=player2.getHp(); x<hp_width; x++) {
+        	for(int y = 0; y < hp_height; y++) {
+        		player2_hpImg.setRGB(x, y, 167); //167은 파란색 hp바 배경
+        	}
+	    }
+        
         g.fillRect(0, 0, getWidth(), getHeight());
       //플레이어 hp바 END
         
@@ -322,29 +338,27 @@ int t = 0;
 
         g.drawImage(background_img, 0, 0, getWidth(), getHeight(), null);
         //마우스 던지는중에만 마우스 그려줌
-        if(player1.getFlyMouse()) g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), null);  //마우스 전체 이미지 그리기
-        if(player2.getFlyMouse()) g.drawImage(p2_mouse_img, player2.getMouseX(), player2.getMouseY(), null);
         g.drawImage(player1_img, player1.getX(), player1.getY(), null);
         g.drawImage(player2_img, player2.getX(), player2.getY(), null);
+        if(player1.getFlyMouse()) g.drawImage(p1_mouse_img, player1.getMouseX(), player1.getMouseY(), null);  //마우스 전체 이미지 그리기
+        if(player2.getFlyMouse()) g.drawImage(p2_mouse_img, player2.getMouseX(), player2.getMouseY(), null);
         g.drawImage(player1_hpImg, 30, 30, hp_width, hp_height, null);
         g.drawImage(player2_hpImg, Main.MAIN_WIDTH-hp_width-30, 30, null);
 
-        //스킬들 그려주는 부분;;
+        //스킬들 그려주는 부분
         int p1startLoc = 30, interver = 60, y_loc = 90;
-        if(player1.isSkill_fistActivate()) g.drawImage(p1FistSkill_img, p1startLoc, y_loc, 50, 50, null);
-        if(player1.isSkill_chargerActivate()) g.drawImage(p1ChargerSkill_img, p1startLoc+interver*1, y_loc, 50, 50, null);
-        if(player1.isSkill_mouseActivate())  g.drawImage(p1MouseSkill_img, p1startLoc+interver*2, y_loc, 50, 50, null);
+        if(player1.fistSkill.Cooltime()) g.drawImage(p1FistSkill_img, p1startLoc, y_loc, 50, 50, null);
+        if(player1.pullOtherSkill.Cooltime()) g.drawImage(p1ChargerSkill_img, p1startLoc+interver*1, y_loc, 50, 50, null);
+        if(player1.mouseSkill.Cooltime())  g.drawImage(p1MouseSkill_img, p1startLoc+interver*2, y_loc, 50, 50, null);
         if(player1.defenseSkill.Cooltime()) g.drawImage(p1DefenseSkill_img, p1startLoc+interver*3, y_loc, 50, 50, null);
-        if(player1.isSkill_notebookActivate()) g.drawImage(p1NotebookSkill_img, p1startLoc+interver*4, y_loc, 50, 50, null);
+        if(player1.noteBookSkill.Cooltime()) g.drawImage(p1NotebookSkill_img, p1startLoc+interver*4, y_loc, 50, 50, null);
         int p2startLoc = Main.MAIN_WIDTH-80;
-        if(player2.isSkill_fistActivate()) g.drawImage(p2FistSkill_img, p2startLoc, y_loc, 50, 50, null);
-        if(player2.isSkill_chargerActivate())g.drawImage(p2ChargerSkill_img, p2startLoc-interver*1, y_loc, 50, 50, null);
-        if(player2.isSkill_mouseActivate())g.drawImage(p2MouseSkill_img, p2startLoc-interver*2, y_loc, 50, 50, null);
+        if(player2.fistSkill.Cooltime()) g.drawImage(p2FistSkill_img, p2startLoc, y_loc, 50, 50, null);
+        if(player2.pullOtherSkill.Cooltime())g.drawImage(p2ChargerSkill_img, p2startLoc-interver*1, y_loc, 50, 50, null);
+        if(player2.mouseSkill.Cooltime())g.drawImage(p2MouseSkill_img, p2startLoc-interver*2, y_loc, 50, 50, null);
         if(player2.defenseSkill.Cooltime())g.drawImage(p2DefenseSkill_img, p2startLoc-interver*3, y_loc, 50, 50, null);
-        if(player2.isSkill_notebookActivate())g.drawImage(p2NotebookSkill_img, p2startLoc-interver*4, y_loc, 50, 50, null);
+        if(player2.noteBookSkill.Cooltime())g.drawImage(p2NotebookSkill_img, p2startLoc-interver*4, y_loc, 50, 50, null);
 
-        
-        
         g.dispose();
         bs.show();
     }
