@@ -9,25 +9,20 @@ public class Player {
 	private long jumpEndSec;
 	private long bookStartSec;
 	private long bookEndSec;
-	private long throwMouse_cooltime;
-	private long book_cooltime;
-	private long fist_cooltime;
-	private long pullOther_cooltime;
-	private long noteBook_cooltime;
 	private boolean jumping;
 	private boolean up, down, left, right;
 	private boolean book;
 	boolean flyMouse;
 	private int mouseX=0, mouseY=400;//마우스 좌표
 	private Player otherPlayer;
-	private boolean pullOther;
 	private int location; //왼쪽이면 -1, 1
-	private int attackRange = 300;
+	private int attackRange = 200;
 	private int[] playerAllPixels;
 	private int[] playerPixels;
 	private int hp;
-	playerType posture;
-	private enum playerType{
+	private int score = 0;
+	playerState posture;
+	private static enum playerState{
 		basic1,			//기본자세1
 		basic2,			//기본자세2
 		mouseReady,		//마우스 던질 준비
@@ -47,9 +42,15 @@ public class Player {
 		mouse,			//마우스
 	}
 	
+	Skill noteBookSkill = new Skill();
+	Skill fistSkill = new Skill();
+	Skill mouseSkill = new Skill();
+	Skill defenseSkill = new Skill();
+	Skill pullOtherSkill = new Skill();
+	
 	//생성될때
 	Player(float x, float y, int width, int height, int hp, int location){
-		posture = playerType.basic1;
+		posture = playerState.basic1;
 		jumping = false;
 		this.hp = hp;
 		this.width = width;
@@ -58,13 +59,22 @@ public class Player {
 		this.y = y;
 		speed = 5;
 		this.location = location;
+		
+		defenseSkill.duration = 3.0f;
+		
+		noteBookSkill.coolTime = 3.0f;
+		fistSkill.coolTime = 0.1f;
+		mouseSkill.coolTime = 2.0f;
+		defenseSkill.coolTime = 5.0f;
+		pullOtherSkill.coolTime = 5.0f;
 	}
+	   
 	
 	void setAllPixels(String src) throws Exception {
 		//플레이어의 전체 이미지를 불러와서 픽셀 데이터로 저장해둔다.
 		playerAllPixels = ((DataBufferInt) (ImageRelation.ImageLoad(src)).getRaster().getDataBuffer()).getData();
 	}
-	
+
 	void setPixels(int[] pixels) {
 		//플레이어의 이미지를 조작하기 위해 저장해둔다.
 		playerPixels = pixels;
@@ -89,10 +99,12 @@ public class Player {
 		return height;
 	}
 	
-	boolean Cooltime(long time, float cool) {
-		long curtime = System.currentTimeMillis();
-		if((curtime-time)/1000 > cool ) return true;
-		else return false;
+	public int getScore() {
+		return score;
+	}
+	
+	public void addScore(int score) {
+		this.score+=score;
 	}
 	
 	long movePreTime = System.currentTimeMillis();
@@ -100,8 +112,8 @@ public class Player {
 	void xMove(float playerX) {
 		this.x += playerX*speed;
 		if(System.currentTimeMillis() - movePreTime >= 100) { //0.3초마다
-			if(posture == playerType.run1) { posture = playerType.run2; }
-			else if(posture == playerType.run2) { posture = playerType.run1; }
+			if(posture == playerState.run1) { posture = playerState.run2; }
+			else if(posture == playerState.run2) { posture = playerState.run1; }
 			movePreTime = System.currentTimeMillis();
 		}
 	}
@@ -131,7 +143,7 @@ public class Player {
 					if(y == Main.MAIN_HEIGHT-height) {
 						//점프가 끝날때
 						down = false; jumping = false;
-						posture = playerType.basic1;
+						posture = playerState.basic1;
 					}
 				}
 			}
@@ -149,13 +161,24 @@ public class Player {
 	int getY() {
 		return (int)y;
 	}
+	void setY(float y) {
+		this.y = y;
+	}
 	
 	boolean getJumping() {
 		return jumping;
 	}
 
+	void setHp(int hp) {
+		this.hp = hp;
+	}
+	
+	void setbasic() {
+		posture = playerState.basic1;
+	}
+	
 	private boolean collisionCheck() {
-    	int space = 30;
+    	int space = 100;
     	// 점프시 충돌은 아직. 좌우만..
     	//현재 플레이어가 왼쪽에 있을 때 충돌 여부 검사
     	
@@ -172,15 +195,15 @@ public class Player {
 	long preTime = System.currentTimeMillis();
 	void update() {
 		if(System.currentTimeMillis() - preTime >= 300) { //0.3초마다
-			if(posture == playerType.basic1) { posture = playerType.basic2; }
-			else if(posture == playerType.basic2) { posture = playerType.basic1; }
+			if(posture == playerState.basic1) { posture = playerState.basic2; }
+			else if(posture == playerState.basic2) { posture = playerState.basic1; }
 			preTime = System.currentTimeMillis();
 		}
 		if(jumping) {
         	jump();
         }
 		flyMouse();
-		if(pullOther) {
+		if(pullOtherSkill.isActivate()) {
 			pullingOther();
 		}
 		if(left && !collisionCheck()) { //충돌 안했고 왼쪽으로 이동
@@ -195,8 +218,9 @@ public class Player {
 		if(right&& collisionCheck()) {//충돌
 			xMove(-1);
 		}
-		if(!left && !right && (posture == playerType.run1||posture == playerType.run2)) { posture = playerType.basic1; } //안움직이면 basic으로
-		if(!book && posture == playerType.defense) { posture = playerType.basic1;  }
+		if(!left && !right && (posture == playerState.run1||posture == playerState.run2)) { posture = playerState.basic1; } //안움직이면 basic으로
+		if(!defenseSkill.isActivate() && posture == playerState.defense) { posture = playerState.basic1;  }
+		
 	}
 	
 	void render() {
@@ -210,8 +234,10 @@ public class Player {
     	}
 	}
 	
+	
+	
 	void jumpingStart() {
-		posture = playerType.jump;
+		posture = playerState.jump;
 		jumping = true;
 		up = true;
 		down = false;
@@ -223,14 +249,14 @@ public class Player {
 	}
 	public void setLeft(boolean left) {
 		this.left = left;
-		if(left) { 	posture = playerType.run1; }
+		if(left) { 	posture = playerState.run1; }
 	}
 	public boolean isRight() {
 		return right;
 	}
 	public void setRight(boolean right) {
 		this.right = right;
-		if(right) { 	posture = playerType.run1; }
+		if(right) { 	posture = playerState.run1; }
 	}
 	
 	public void setJumping(boolean jumping) {
@@ -243,42 +269,54 @@ public class Player {
 	public boolean getBook() {
 		return book;
 	}
-	void bookskilStart() {
-		posture = playerType.defense;
-		book = true;
-		bookStartSec = System.currentTimeMillis();
-		System.out.println("book 활성화");
+	
+	
+	void DefenseSkillStart() {
+		if(defenseSkill.Cooltime()) {
+			posture = playerState.defense;
+			defenseSkill.skillStart();
+			System.out.println("방어 시작");
+		}
 	}
-	void bookskil() {
-		bookEndSec = System.currentTimeMillis();
-		if((bookEndSec - bookStartSec)/1000 >= 1) { 
-			posture = playerType.basic1;
-			book = false;
+	void defenseSkillProcess() {
+		if(defenseSkill.skillIng()) { 
+			posture = playerState.basic1;
+			defenseSkill.skillEnd();
 			System.out.println("book 끝남");
+		}else {
+			
 		}
 	}
 	
+	//주먹질
 	int fist() {
 		System.out.println("fist 함");
-		if(otherPlayer.book == true) return 0;
-		if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
-			posture = playerType.fist;
-			System.out.println("맞음");
-			otherPlayer.posture = playerType.beHit;
-			Sound.fistBgm();
-			return 5;
+		if(fistSkill.Cooltime()) {
+			fistSkill.skillStart();
+			if(otherPlayer.defenseSkill.activate == true) return 0; //다른 플레이어가 방어중이면 주먹 효과 0
+	
+			if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
+				posture = playerState.fist;
+				System.out.println("맞음");
+				otherPlayer.posture = playerState.beHit;
+				Sound.fistBgm();
+				return 5;
+			}
 		}
 		return 0;
 	}
 	
 	int noteBook() {
 		System.out.println("noteBook 함");
-		if(otherPlayer.book == true) return 0;
-		if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
-			System.out.println("맞음");
-			posture = playerType.notebookHit;
-			Sound.fistBgm();
-			return 15;
+		if(noteBookSkill.Cooltime()) {
+			noteBookSkill.skillStart();
+			if(otherPlayer.book == true) return 0;
+			if(x + attackRange > otherPlayer.getX() && x - attackRange < otherPlayer.getX()) {
+				System.out.println("맞음");
+				posture = playerState.notebookHit;
+				Sound.fistBgm();
+				return 20;
+			}
 		}
 		return 0;
 	}
@@ -293,7 +331,7 @@ public class Player {
 	}
 
 	private boolean mouseCollisionChk() {
-    	int space = 30;
+    	int space = 50;
     	// 마우스랑 상대방 닿았는지
     	if(mouseX <= otherPlayer.x+space && mouseX+width >= otherPlayer.x+space) { //충돌됨.
     		Sound.fistBgm();
@@ -309,19 +347,23 @@ public class Player {
 	void pullingOther() {
 		//상대방 내쪽으로 끌어오는중
 		
-		if(pullOther && !collisionCheck()) { //끌어오는중이고 충돌 X
+		if(pullOtherSkill.isActivate() && !collisionCheck()) { //끌어오는중이고 충돌 X
 			otherPlayer.xMove(location*2);//빠르게 오도록 함
 		}
-		if(pullOther && collisionCheck()) { //끌어오는중이고 충돌 
-			pullOther = false;
+		if(pullOtherSkill.isActivate() && collisionCheck()) { //끌어오는중이고 충돌 
+			pullOtherSkill.skillEnd();
 		}	
 	}
+	
+	
 	
 	void pullOther() {
 		//상대방 내쪽으로 끌어오기
 		//둘의 거리가 좁을때만 가능하게 하기
-		pullOther = true;
-		
+//		pullOther = true;
+		if(pullOtherSkill.Cooltime()) {
+			pullOtherSkill.skillStart();
+		}
 	}
 	
 	boolean getFlyMouse() {
@@ -329,29 +371,30 @@ public class Player {
 	}
 	
 	void throwMouse() {
-		
-		Cooltime(throwMouse_cooltime, 5);
-		//마우스 던지기 시작
-		flyMouse = true;
-		//마우스 위치 세팅
-        mouseX = (int)x;
+		if(mouseSkill.Cooltime()) {
+			mouseSkill.skillStart();
+			//마우스 던지기 시작
+			flyMouse = true;
+			//마우스 위치 세팅
+	        mouseX = (int)x;
+		}
 	}
-	
+
 	public void flyMouse() {
 		//마우스 던지는중
-		
-		
 		if(flyMouse) {
 			if(mouseCollisionChk()) { //상대방한테 마우스 닿았을때
 				//충돌
 				flyMouse = false;
 				//상대방 피 깎기
-				otherPlayer.hit(100);
+				otherPlayer.hit(10);
 			}
 			else{
 				mouseX+=((location*-1)*mouseSpeed); //location으로 플레이어의 위치에 따라 달라지도록 함
 			}
 		}
 	}
+	
+	
 	
 }
