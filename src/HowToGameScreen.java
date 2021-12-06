@@ -1,10 +1,9 @@
 import javax.swing.*;
 
 public class HowToGameScreen extends ImagePanel{
-	JButton goMainScreen = new JButton("°Á");
+	JButton goMainScreen = new JButton("‚Üê");
 	public HowToGameScreen() {
-		//πË∞Ê ¿ÃπÃ¡ˆ º≥¡§
-		super(new ImageIcon("./img/howToGameBackground.png").getImage(),
+		super(new ImageIcon("./img/gameStory.png").getImage(),
 				Main.MAIN_WIDTH, Main.MAIN_HEIGHT);
 		
 		goMainScreen.setBounds(Main.MAIN_WIDTH-63, 0, 50, 30);

@@ -2,15 +2,18 @@
 class Skill {
 	//스킬 클래스
 	
-	long startTime; //스킬 시작 시간
-	float coolTime; //스킬 쿨타임
-	float duration; //스킬 지속 시간
-	boolean activate; //스킬이 활성화 되어있는지.(스킬이 실행중인지)
+	private long startTime; //스킬 시작 시간
+	private float coolTime; //스킬 쿨타임
+	private float duration; //스킬 지속 시간
+	private boolean activate; //스킬이 활성화 되어있는지.(스킬이 실행중인지)
 	
-	Skill(){
+	
+	Skill(float duration, float coolTime){
 		activate = false; // 처음에는 활성화가 안되어 있음.
+		this.duration = duration;
+		this.coolTime = coolTime;
 	}
-	
+
 	boolean isActivate() {
 		return activate;
 	}
@@ -34,9 +37,9 @@ class Skill {
 	boolean skillIng() {
 		//스킬 지속 시간 안지났으면 true, 지났으면 false
 		if((System.currentTimeMillis()-this.startTime)>=this.duration*1000){
-			return true;
+			return false;
 		}
-		else { return false; }
+		else { return true; }
 	}
 	
 	//쿨타임
