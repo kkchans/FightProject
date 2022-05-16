@@ -23,6 +23,7 @@ public class Player {
 	private int[] playerPixels;
 	private int hp;
 	private boolean movable = true;
+	final static int FPS = 60;
 	playerState posture;
 	private static enum playerState{
 		basic1,			//기본자세1
@@ -62,11 +63,10 @@ public class Player {
 		this.height = height;
 		this.x = x;
 		this.y = y;
-		speed = 5;
+		speed = 10;
 		this.location = location;
 		this.playerName = playerName;
 	}
-	   
 	
 	public long getScore() {
 		return score;
@@ -142,6 +142,8 @@ public class Player {
 	
 	int jumpHeight = 100;
 	//점프
+	
+	
 	void jump() {
 //		if(!collisionCheck(x-location, otherPlayer.x)) { //충돌 안했을때
 			if(y >= Main.MAIN_HEIGHT-height-jumpHeight && up && jumping)  {//점프
@@ -149,7 +151,7 @@ public class Player {
 				if(jumpEndSec - jumpStartSec >= 0.5) //올라감
 				{
 					yMove(-8);
-					jumpStartSec = System.currentTimeMillis();
+					jumpStartSec = jumpEndSec;
 					if(y == Main.MAIN_HEIGHT-height-jumpHeight) { up = false; down = true; }
 				}
 			}else if(y <= Main.MAIN_HEIGHT-height && down) { //낙하
@@ -157,7 +159,7 @@ public class Player {
 				if(jumpEndSec - jumpStartSec >= 0.1) //내려옴
 				{
 					yMove(8);
-					jumpStartSec = System.currentTimeMillis();
+					jumpStartSec = jumpEndSec;
 					if(y >= Main.MAIN_HEIGHT-height) {
 						//점프가 끝날때
 						down = false; jumping = false;
@@ -200,13 +202,17 @@ public class Player {
     	return false;
     }
 	
-	long preTime = System.currentTimeMillis();
+	long posturePreTime = System.currentTimeMillis();
+	private long lastTime = System.currentTimeMillis();
+	private long currentTime = lastTime;
 	void update() {
-		if(movable) {
-			if(System.currentTimeMillis() - preTime >= 300) { //0.3초마다
+		currentTime = System.currentTimeMillis();
+		if(currentTime - lastTime >= (1000.0/FPS) && movable) {
+			lastTime = currentTime;
+			if(System.currentTimeMillis() - posturePreTime >= 300) { //0.3초마다
 				if(posture == playerState.basic1) { posture = playerState.basic2; }
 				else if(posture == playerState.basic2) { posture = playerState.basic1; }
-				preTime = System.currentTimeMillis();
+				posturePreTime = System.currentTimeMillis();
 			}
 			if(jumping) {
 	        	jump();
@@ -289,7 +295,7 @@ public class Player {
 			this.left = left;
 			if(left && pBasicPstreChk()) { 	
 				posture = playerState.run1;
-				}
+			}
 		}
 	}
 	public boolean isRight() {

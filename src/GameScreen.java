@@ -227,8 +227,6 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
         new Thread(this).start();
     }
 
-
-
     public synchronized void stop() {
        //게임을 멈추거나 나갈때 실행되는..
         running = false; //
@@ -268,7 +266,6 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
        player1.setY(Main.MAIN_HEIGHT-imgHeight);
        player1.setbasic();
        
-       
        player2.setHp(500);
        imgWidth = player2_img.getWidth(); imgHeight = player2_img.getHeight();
        player2.setX(Main.MAIN_WIDTH-imgWidth);
@@ -292,14 +289,15 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
     }
     long now;
     boolean shouldRender;
+    long prevTick = System.currentTimeMillis();
+    
     public void run() {
-
-       
         long lastTime = System.nanoTime();
         double nsPerTick = 1000000000D;
 
         int frames = 0;
         int ticks = 0;
+        
 
         long lastTimer = System.currentTimeMillis();
         double delta = 0;
@@ -308,6 +306,7 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
         count = 60;
         
         while (running) {
+        	delta = (System.currentTimeMillis() - prevTick)/180000;//180프레임
            if(stage_fun) {
               System.out.println("stage_fun");
               if(System.currentTimeMillis() - stage_start >  3000) { 
@@ -321,8 +320,7 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
                
 //               timerPanel.repaint();
 
-               if (shouldRender) {
-                   frames++;
+               if (System.currentTimeMillis() > delta*1000) {//0.1초마다
                    player1.update();
                    player2.update();
                    if(player1.getJumping()) {
@@ -341,8 +339,6 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
                }
 
             if(!gameStop) { //게임을 멈추지 않았을 때(게임을 멈추면 하지 말아야 할 것들)
-               
-               
                if(player1.getHp() <= 0 || player2.getHp() <= 0) {
                     //if(running) { stop(); } //게임을 멈춤.
                     //round++;
@@ -360,20 +356,6 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
                      gameStop = true;
                   
                   }
-               
-               if (delta >= 0.00001) {
-                    delta -= 0.00001;
-                    shouldRender = true;
-                }
-                
-               now = System.nanoTime();
-               delta += (now - lastTime) / nsPerTick;
-               lastTime = now;
-               if (System.currentTimeMillis() - lastTimer >= 100) {
-                   lastTimer += 100;
-                   frames = 0;
-                   ticks = 0;
-               }
                
                // 제한 시간
                long afterTime = System.currentTimeMillis(); 
@@ -405,8 +387,8 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
                
             }
            
-            
-        }
+            prevTick = System.currentTimeMillis();
+        }//while end
        
     }
 
@@ -486,9 +468,10 @@ public class GameScreen extends Canvas implements Runnable, KeyListener {
     //keylistener 구현
    @Override
    public void keyTyped(KeyEvent e) { }
-
+   
    @Override
    public void keyPressed(KeyEvent e) {
+	  
       if(!gameStop) {
          switch (e.getKeyCode()) { //키 코드 알아내기
          
